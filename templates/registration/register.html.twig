@@ -1,22 +1,98 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Рофлолига - Регистрация{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
 
-    <h1>Register</h1>
+    {{ include('header.html.twig') }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+    <div class="container" {{ stimulus_controller('register') }}>
+        <div class="container py-4">
 
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+            {% for flash_error in app.flashes('verify_email_error') %}
+                <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+            {% endfor %}
+
+            <div class="d-flex justify-content-center mb-3">
+                <h1 class="h3 mb-3 fw-normal">Регистрация</h1>
+            </div>
+
+            <div {{ stimulus_target('register', 'form') }}>
+                {{ form_start(registrationForm, {
+                    'attr': {
+                        'class': 'needs-validation'
+                    }
+                }) }}
+                <div class="mb-3">
+                    {{ form_errors(registrationForm) }}
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.username, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Ник',
+                            'data-action': 'register#nickname',
+                        }
+                    }) }}
+                    {{ form_label(registrationForm.username) }}
+                    <div class="form-text text-danger">
+                        {{ form_errors(registrationForm.username) }}
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.email, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'E-Mail',
+                            'data-action': 'register#email',
+                        }
+                    }) }}
+                    {{ form_label(registrationForm.email) }}
+                    <div class="form-text text-danger">
+                        {{ form_errors(registrationForm.email) }}
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.plainPassword.first, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Пароль',
+                            'data-action': 'register#password',
+                        }
+                    }) }}
+                    {{ form_label(registrationForm.plainPassword.first) }}
+                    <div class="invalid-feedback">
+                        Минимальная длина пароля - 6 символов.
+                    </div>
+                    <div class="form-text text-danger">
+                        {{ form_errors(registrationForm.plainPassword.first) }}
+                    </div>
+                </div>
+                <div class="form-floating mb-3">
+                    {{ form_widget(registrationForm.plainPassword.second, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Повтор пароля',
+                            'data-action': 'register#repeat'
+                        }
+                    }) }}
+                    {{ form_label(registrationForm.plainPassword.second) }}
+                    <div class="invalid-feedback">
+                        Пароль должен совпадать.
+                    </div>
+                    <div class="form-text text-danger">
+                        {{ form_errors(registrationForm.plainPassword.second) }}
+                    </div>
+                </div>
+                {{ form_row(registrationForm._token) }}
+                <div class="mb-3 form-text">Регистрируясь, вы автоматически даёте свое согласие на обработку данных.</div>
+                <button type="submit" {{ stimulus_action('register', 'submit') }} class="w-100 btn btn-lg btn-primary">Зарегистрироваться</button>
+                {{ form_end(registrationForm) }}
+            </div>
+
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
 {% endblock %}

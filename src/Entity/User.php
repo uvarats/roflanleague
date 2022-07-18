@@ -20,7 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column()]
     private ?int $id = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 24, unique: true)]
     private ?string $username = null;
 
     #[ORM\Column]
@@ -40,6 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\ManyToOne(inversedBy: 'participants')]
+    private ?Tourney $tourney = null;
 
     public function __construct()
     {
@@ -166,6 +169,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    public function getTourney(): ?Tourney
+    {
+        return $this->tourney;
+    }
+
+    public function setTourney(?Tourney $tourney): self
+    {
+        $this->tourney = $tourney;
 
         return $this;
     }

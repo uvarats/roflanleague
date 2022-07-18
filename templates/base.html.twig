@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}{{ title }}{% endblock %}</title>
+        <title>{% block title %}{% endblock %}</title>
         <meta name="description" content="Roflanleague by LaszloCraft">
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
         {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
@@ -16,64 +16,7 @@
     </head>
     <body>
         {% block body %}
-            <div class="container">
-                <div class="container py-4">
-                    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
-                        <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
-                            <img class="rounded-circle" height="48" width="48" src="{{ asset('assets/logo.jpg') }}">
-                            <span class="fs-4 ms-3">Рофлолига</span>
-                        </a>
-                        {% if app.user %}
-                            <div class="dropdown text-end">
-                                <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <img src="https://mc-heads.net/avatar/" alt="mdo" width="32" height="32" class="rounded-circle">
-                                </a>
-                                <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
-                                    <li><a class="dropdown-item" href="#">New project...</a></li>
-                                    <li><a class="dropdown-item" href="#">Settings</a></li>
-                                    <li><a class="dropdown-item" href="#">Profile</a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item" href="#">Sign out</a></li>
-                                </ul>
-                            </div>
-                        {% else %}
-                            <div class="col-md-3 text-end">
-                                <button type="button" class="btn btn-outline-primary me-2">Вход</button>
-                                <button type="button" class="btn btn-primary">Регистрация</button>
-                            </div>
-                        {% endif %}
-                    </header>
 
-                    <div class="p-5 mb-4 bg-light rounded-3">
-                        <div class="container-fluid py-5">
-                            <h1 class="display-5 fw-bold">Рофлолига</h1>
-                            <p class="col-md-8 fs-4">Легендарный турнир от создателей LaszloCraft. Бесплатное участие (правда и призового фонда нет ¯\_(ツ)_/¯).</p>
-                            <button class="btn btn-primary btn-lg" type="button">Регистрация</button>
-                        </div>
-                    </div>
-
-                    <div class="row align-items-md-stretch">
-                        <div class="col-md-6">
-                            <div class="h-100 p-5 text-white bg-dark rounded-3">
-                                <h2>Change the background</h2>
-                                <p>Swap the background-color utility and add a `.text-*` color utility to mix up the jumbotron look. Then, mix and match with additional component themes and more.</p>
-                                <button class="btn btn-outline-light" type="button">Example button</button>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="h-100 p-5 bg-light border rounded-3">
-                                <h2>Add borders</h2>
-                                <p>Or, keep it light and add a border for some added definition to the boundaries of your content. Be sure to look under the hood at the source HTML here as we've adjusted the alignment and sizing of both column's content for equal-height.</p>
-                                <button class="btn btn-outline-secondary" type="button">Example button</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <footer class="pt-3 mt-4 text-muted border-top">
-                        © 2022
-                    </footer>
-                </div>
-            </div>
         {% endblock %}
     </body>
 </html>

@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Рофлолига - Админ-панель!{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+    <div class="container">
+        <div class="container-fluid py-4">
+            <div class="d-flex justify-content-center">
+                <span class="h3">Привет, {{ app.user.username }}. Это админ-панель!</span>
+            </div>
+            <div class="list-group mt-3">
+                <a href="" class="list-group-item list-group-item-action">Управление турнирами</a>
+                <a href="" class="list-group-item list-group-item-action">Управление пользователями</a>
+            </div>
+        </div>
+    </div>
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

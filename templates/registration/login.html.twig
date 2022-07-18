@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Рофлолига - Вход{% endblock %}
+
+{% block body %}
+    <div class="container d-flex flex-column h-100">
+        <div class="container py-4">
+
+            {{ include('header.html.twig') }}
+
+            <main class="flex-shrink-0 text-center mt-5" style="width: 100%;
+                         max-width: 330px;
+                         padding: 15px;
+                         margin: auto;">
+                <form action="{{ path('app_login') }}" method="post">
+                    <h1 class="h3 mb-3 fw-normal">Вход</h1>
+
+                    {% if error %}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error.messageKey|trans(error.messageData, 'security') }}
+                        </div>
+                    {% endif %}
+
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" name="_username" id="floatingInput" placeholder="">
+                        <label for="floatingInput">Ник/логин</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" name="_password" id="floatingPassword" placeholder="Password">
+                        <label for="floatingPassword">Пароль</label>
+                    </div>
+
+                    <div class="checkbox mb-3">
+                        <label>
+                            <input type="checkbox" value="remember-me"> Запомнить меня
+                        </label>
+                    </div>
+                    <input type="hidden" name="_csrf_token"
+                           value="{{ csrf_token('authenticate') }}"
+                    >
+                    <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
+                </form>
+            </main>
+
+            <div class="pt-5">
+                {{ include('footer.html.twig') }}
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

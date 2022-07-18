@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container py-3" {{ stimulus_controller('main', {
+        'loginUrl': path('app_login'),
+        'registerUrl': path('app_register')
+    }) }}>
+        <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+            <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+                <img class="rounded-circle" height="48" width="48" src="{{ asset('assets/logo.jpg') }}">
+                <span class="fs-4 ms-3">Рофлолига</span>
+            </a>
+
+            <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="{{ path('app_main') }}" class="nav-link px-2 link-secondary">Домой</a></li>
+                <li><a href="#" class="nav-link px-2 link-dark">Сезон</a></li>
+                <li><a href="#" class="nav-link px-2 link-dark">История</a></li>
+                <li><a href="#" class="nav-link px-2 link-dark">Рейтинг</a></li>
+{#                <li><a href="#" class="nav-link px-2 link-dark">About</a></li>#}
+            </ul>
+
+            <div class="col-md-3 text-end">
+                {% if app.user %}
+                    <div class="dropdown text-end d-flex justify-content-center justify-content-md-end">
+                        <a href="#" class="d-flex justify-content-center justify-content-md-end align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://mc-heads.net/avatar/{{ app.user.username }}" alt="mdo" width="32" height="32" class="rounded-circle">
+                            <span class="ms-2">{{ app.user.username }}</span>
+                        </a>
+                        <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
+                            <li><a class="dropdown-item" href="#">Профиль</a></li>
+                            <li><a class="dropdown-item" href="#">Настройки</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li><a class="dropdown-item" href="{{ path('app_admin') }}">Админ-панель</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ path('app_logout') }}">Выход</a></li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <button type="button" {{ stimulus_action('main', 'login') }} class="btn btn-outline-primary me-2">Вход</button>
+                    <button type="button" {{ stimulus_action('main', 'register') }} class="btn btn-primary">Регистрация</button>
+                {% endif %}
+            </div>
+        </header>
+    </div>
+{% endblock %}
