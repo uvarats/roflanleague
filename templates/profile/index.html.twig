@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Рофлолига - Профиль!{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        {{ user.username }}
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

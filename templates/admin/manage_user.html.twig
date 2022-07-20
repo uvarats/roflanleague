@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Управление пользователем{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+    <div class="container">
+        <div class="d-flex justify-content-center text-center mb-3">
+            <p class="h2">Управление пользователем {{ user.username }}</p>
+        </div>
+        <div class="row mb-3">
+            <div class="col-auto">
+                <img class="rounded-circle" width="128" height="128" src="https://mc-heads.net/avatar/{{ user.username }}">
+            </div>
+            <div class="col d-flex flex-column">
+                <a href="{{ path('app_concrete_profile', {id: user.id}) }}" class="text-dark text-decoration-none">
+                    <span class="h3">{{ user.username }}</span>
+                </a>
+                <p>Дата регистрации: {{ user.registerDate|date('d.m.Y H:i:s') }}</p>
+                <p>Почта: {{ user.email }}</p>
+                <p>Статус почты:
+                    {% if user.verified %}
+                        <span class="text-success">подтверждена</span>
+                    {% else %}
+                        <span class="text-danger">не подтвержден</span>
+                    {% endif %}
+                </p>
+                <p>Блокировка:
+                    {% if user.isBanned %}
+                        <span class="text-danger">забанен</span>
+                    {% else %}
+                        <span class="text-success">нет</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        <div class="row d-flex row-cols-md-4 row-cols-1 justify-content-between">
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                <div class="col bg-light rounded-3 mb-md-0 mb-3">
+                    <div class="p-4 text-center">
+                        <p>Действия с правами</p>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="col bg-light rounded-3 mb-md-0 mb-3">
+                <div class="p-4 text-center">
+                    <p>Действия с бейджами</p>
+                    <button class="btn btn-outline-primary">Добавить бейдж</button>
+                </div>
+            </div>
+            <div class="col bg-light rounded-3 mb-md-0 mb-3">
+                <div class="p-4 text-center d-flex flex-column">
+                    <p>Действия с аккаунтом</p>
+                    {% if not user.isBanned %}
+                        <button class="btn btn-outline-warning mb-3 {% if app.user.id == user.id %}disabled{% endif %}">Заблокировать</button>
+                    {% else %}
+                        <button class="btn btn-outline-success mb-3">Разблокировать</button>
+                    {% endif %}
+                    <button class="btn btn-outline-danger">Удалить аккаунт</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

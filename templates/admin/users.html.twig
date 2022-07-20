@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Управление пользователями{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex justify-content-center mb-3">
+            <p class="h2">Управление пользователями</p>
+        </div>
+        <div class="list-group mb-3">
+            {% for user in users %}
+                <a href="{{ path('app_admin_manage_user', {id: user.id}) }}" class="list-group-item list-group-item-action">
+                    <div class="d-flex w-100 align-items-center">
+                        <h5 class="mb-1">{{ user.username }}</h5>
+                        {% if user.isBanned %}
+                            <span class="ms-2 badge rounded-pill bg-danger">Забанен</span>
+                        {% endif %}
+                    </div>
+{#                    <p class="mb-1">Нажмите для перехода в панель управления пользователем.</p>#}
+                    <small>Дата регистрации: {{ user.registerDate|date('d.m.Y H:i:s') }}</small>
+                </a>
+            {% endfor %}
+        </div>
+        {% if pagesCount > 1 %}
+            <div class="d-flex justify-content-center justify-content-md-start">
+                <nav aria-label="...">
+                    <ul class="pagination">
+                        <li class="page-item {% if currentPage == 1 %}disabled{% endif %}">
+                            <a {% if currentPage > 1%}href="{{ path('app_admin_users', {page: currentPage - 1}) }}"{% endif %} class="page-link"><-</a>
+                        </li>
+                        {% for i in 1..pagesCount %}
+                            <li class="page-item {% if i == currentPage %}active{% endif %}">
+                                <a class="page-link" href="{{ path('app_admin_users', {page: i}) }}">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+                        <li class="page-item {% if currentPage == pagesCount %}disabled{% endif %}">
+                            <a {% if currentPage < pagesCount %}href="{{ path('app_admin_users', {page: currentPage + 1}) }}"{% endif %} class="page-link" href="#">-></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}
