@@ -2,27 +2,61 @@ import { Controller } from "@hotwired/stimulus";
 import axios from 'axios';
 
 export default class extends Controller {
-    static targets = [ "form" ];
+
+    static values = {
+        submitUrl: String,
+    };
+
+    static targets = [ "form", "errors" ];
 
     submit(event) {
         event.preventDefault();
         event.stopPropagation();
-        let form = this.formTarget.querySelector('.needs-validation');
+
+        let target = this.formTarget;
+        let form = target.querySelector('.needs-validation');
+
+        let callbacks = [this.validateNickname, this.validateEmail, this.validatePassword, this.validateRepeat];
+        let validationResult = [];
+        for(let i = 0; i < 4; i++) {
+            validationResult.push(this.validate(form[i], callbacks[i]));
+        }
+        console.log(validationResult);
+        if(validationResult.includes(false)) {
+            return;
+        }
+
         let formData = new FormData(form);
 
-        axios.post('/signup', formData).then(function (response) {
-            console.log(response.data);
-        });
+        let errorsTarget = this.errorsTarget;
+        let oldButtonData = event.target.innerHTML;
+        event.target.disabled = true;
+        event.target.innerHTML =
+            '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+        axios.post(this.submitUrlValue, formData)
+            .then(function (response) {
+                if(response.data.error) {
+                    event.target.disabled = false;
+                    event.target.innerHTML = oldButtonData;
+                    errorsTarget.innerText = response.data.error;
+                }
+                if(response.data.success) {
+                    target.innerHTML = `<div class="alert alert-success" role="alert">
+                        ${response.data.success}
+                    </div>`;
+                }
+            });
     }
 
     validate(target, callback) {
         let validationResult = callback(target.value);
         if (validationResult) {
-            event.target.classList.remove('is-invalid');
-            event.target.classList.add('is-valid');
+            target.classList.remove('is-invalid');
+            target.classList.add('is-valid');
         } else {
-            event.target.classList.remove('is-valid');
-            event.target.classList.add('is-invalid');
+            target.classList.remove('is-valid');
+            target.classList.add('is-invalid');
         }
         return validationResult;
     }
@@ -52,7 +86,7 @@ export default class extends Controller {
             .toLowerCase()
             .match(
                 /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            );
+            ) ?? false;
     }
 
     validatePassword(value) {
@@ -61,7 +95,6 @@ export default class extends Controller {
 
     validateRepeat(value) {
         let password = document.getElementById('registration_form_plainPassword_first').value;
-        console.log(password);
         return password === value && password !== "";
     }
 }

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container" {{ stimulus_controller('reset-password', {
+        'changeSubmitUrl': path('app_reset_password'),
+        'successUrl': path('app_main'),
+    }) }}>
+        <div class="container py-4">
+            <div class="minified" {{ stimulus_target('reset-password', 'changeForm') }}>
+                <p class="h2">Смена пароля</p>
+
+                {{ form_start(resetForm, {
+                    'attr': {
+                        'class': 'needs-validation',
+                    }
+                }) }}
+
+                <div class="form-floating mb-3">
+                    {{ form_widget(resetForm.plainPassword.first, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Новый пароль',
+                        }
+                    }) }}
+                    {{ form_label(resetForm.plainPassword.first) }}
+                </div>
+
+                <div class="form-floating mb-3">
+                    {{ form_widget(resetForm.plainPassword.second, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'Повтор пароля',
+                        }
+                    }) }}
+                    {{ form_label(resetForm.plainPassword.second) }}
+                </div>
+                <div class="form-text text-danger mb-3" {{ stimulus_target('reset-password', 'resetErrors') }}>
+                    {{ form_errors(resetForm) }}
+                    {{ form_errors(resetForm.plainPassword) }}
+                    {{ form_errors(resetForm.plainPassword.first) }}
+                    {{ form_errors(resetForm.plainPassword.second) }}
+                </div>
+
+                <button class="btn btn-primary" {{ stimulus_action('reset-password', 'changeFormSubmit') }}>Сбросить пароль</button>
+                {{ form_end(resetForm) }}
+            </div>
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

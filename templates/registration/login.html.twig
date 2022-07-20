@@ -30,14 +30,12 @@
                         <label for="floatingPassword">Пароль</label>
                     </div>
 
-                    <div class="checkbox mb-3">
-                        <label>
-                            <input type="checkbox" value="remember-me"> Запомнить меня
-                        </label>
+                    <div class="mb-3">
+                        <a class="link-primary" href="{{ path('app_forgot_password_request') }}">Забыли пароль?</a>
                     </div>
-                    <input type="hidden" name="_csrf_token"
-                           value="{{ csrf_token('authenticate') }}"
-                    >
+                        <input type="hidden" name="_csrf_token"
+                               value="{{ csrf_token('authenticate') }}"
+                        >
                     <button class="w-100 btn btn-lg btn-primary" type="submit">Войти</button>
                 </form>
             </main>

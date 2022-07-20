@@ -44,9 +44,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'participants')]
     private ?Tourney $tourney = null;
 
+    #[ORM\ManyToMany(targetEntity: Badge::class, mappedBy: 'users')]
+    private Collection $badges;
+
     public function __construct()
     {
         $this->seasonHistories = new ArrayCollection();
+        $this->badges = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -181,6 +185,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setTourney(?Tourney $tourney): self
     {
         $this->tourney = $tourney;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Badge>
+     */
+    public function getBadges(): Collection
+    {
+        return $this->badges;
+    }
+
+    public function addBadge(Badge $badge): self
+    {
+        if (!$this->badges->contains($badge)) {
+            $this->badges[] = $badge;
+            $badge->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBadge(Badge $badge): self
+    {
+        if ($this->badges->removeElement($badge)) {
+            $badge->removeUser($this);
+        }
 
         return $this;
     }

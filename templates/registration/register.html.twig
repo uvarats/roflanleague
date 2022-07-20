@@ -35,9 +35,6 @@
                         }
                     }) }}
                     {{ form_label(registrationForm.username) }}
-                    <div class="form-text text-danger">
-                        {{ form_errors(registrationForm.username) }}
-                    </div>
                 </div>
                 <div class="form-floating mb-3">
                     {{ form_widget(registrationForm.email, {
@@ -48,9 +45,6 @@
                         }
                     }) }}
                     {{ form_label(registrationForm.email) }}
-                    <div class="form-text text-danger">
-                        {{ form_errors(registrationForm.email) }}
-                    </div>
                 </div>
                 <div class="form-floating mb-3">
                     {{ form_widget(registrationForm.plainPassword.first, {
@@ -63,9 +57,6 @@
                     {{ form_label(registrationForm.plainPassword.first) }}
                     <div class="invalid-feedback">
                         Минимальная длина пароля - 6 символов.
-                    </div>
-                    <div class="form-text text-danger">
-                        {{ form_errors(registrationForm.plainPassword.first) }}
                     </div>
                 </div>
                 <div class="form-floating mb-3">
@@ -80,10 +71,9 @@
                     <div class="invalid-feedback">
                         Пароль должен совпадать.
                     </div>
-                    <div class="form-text text-danger">
-                        {{ form_errors(registrationForm.plainPassword.second) }}
-                    </div>
                 </div>
+                <div class="form-text text-danger" {{ stimulus_target('register', 'errors') }}></div>
+
                 {{ form_row(registrationForm._token) }}
                 <div class="mb-3 form-text">Регистрируясь, вы автоматически даёте свое согласие на обработку данных.</div>
                 <button type="submit" {{ stimulus_action('register', 'submit') }} class="w-100 btn btn-lg btn-primary">Зарегистрироваться</button>

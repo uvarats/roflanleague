@@ -68,11 +68,11 @@ class RegistrationController extends AbstractController
         }
         if ($form->isSubmitted() && !$form->isValid()) {
             $errors = $form->getErrors(true);
-            $errorsCollection = [];
             foreach ($errors as $error) {
-                $errorsCollection[] = $error->getMessage();
+                return new JsonResponse([
+                    'error' => $error->getMessage(),
+                ]);
             }
-            return new JsonResponse($errorsCollection);
         }
 
         return $this->renderForm('registration/register.html.twig', [

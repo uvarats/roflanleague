@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ссылка для сброса пароля{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="container pb-3">
+            <div class="alert alert-success minified" style="max-width: 550px !important;" role="alert">
+                Если аккаунт с данной почтой существует, то Вам будет отправлена ссылка, с помощью которой вы сможете сбросить пароль.
+                Ссылка истечет в течение: {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+                <p></p>
+                Если письмо не пришло - проверьте спам или <a href="{{ path('app_forgot_password_request') }}">попробуйте ещё раз.</a>
+            </div>
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

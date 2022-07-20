@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Рофлолига - Сброс пароля{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container" {{ stimulus_controller('reset-password') }}>
+        <div class="container py-4 d-flex">
+            <div class="flex-shrink-0 minified" {{ stimulus_target('reset-password', 'requestForm') }}>
+                {% for flash_error in app.flashes('reset_password_error') %}
+                    <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                {% endfor %}
+                <p class="h2">Сброс пароля</p>
+
+                {{ form_start(requestForm, {
+                    'attr': {
+                        'class': 'needs-validation'
+                    }
+                }) }}
+                <div class="form-floating">
+                    {{ form_widget(requestForm.email, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': 'E-Mail',
+                        }
+                    }) }}
+                    {{ form_label(requestForm.email) }}
+                </div>
+                <div class="form-text mb-3">
+                    Введите почту, которую Вы указывали при регистрации.
+                    Туда мы отправим ссылку для сброса пароля.
+                </div>
+
+                <button {{ stimulus_action('reset-password', 'submit') }} class="btn btn-primary">Сбросить пароль</button>
+                {{ form_end(requestForm) }}
+            </div>
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}
