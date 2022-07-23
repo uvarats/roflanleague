@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container d-flex justify-content-center flex-column">
+        <div class="text-center mb-3">
+            <span class="h2">{{ title }}</span>
+        </div>
+        <div>
+            {{ form_start(tourneyForm) }}
+
+            <div class="form-floating mb-3">
+                {{ form_widget(tourneyForm.name, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Название'
+                    }
+                }) }}
+                {{ form_label(tourneyForm.name) }}
+            </div>
+
+            <div class="form-floating mb-3">
+                {{ form_widget(tourneyForm.impactCoefficient, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Коэф. важности'
+                    }
+                }) }}
+                {{ form_label(tourneyForm.impactCoefficient) }}
+            </div>
+
+            <div>
+                {{ form_widget(tourneyForm.submit, {
+                    'attr': {
+                        'class': 'btn btn-primary w-100'
+                    }
+                }) }}
+            </div>
+            {{ form_end(tourneyForm) }}
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

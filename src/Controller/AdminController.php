@@ -4,11 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Tourney;
 use App\Entity\User;
+use App\Form\TourneyType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Config\Framework\RequestConfig;
 
+#[Route('/admin')]
 class AdminController extends AbstractController
 {
 
@@ -17,8 +23,7 @@ class AdminController extends AbstractController
     )
     {
     }
-
-    #[Route('/admin', name: 'app_admin')]
+    #[Route('', name: 'app_admin')]
     public function index(): Response
     {
         return $this->render('admin/index.html.twig', [
@@ -26,7 +31,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/users/{page}', name: 'app_admin_users')]
+    #[Route('/users/{page}', name: 'app_admin_users')]
     public function users(int $page = 1): Response
     {
         $users = $this->em->getRepository(User::class);
@@ -39,7 +44,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/users/manage/{id}', name: 'app_admin_manage_user')]
+    #[Route('/users/manage/{id}', name: 'app_admin_manage_user')]
     public function manage(User $user): Response
     {
         return $this->render('admin/manage_user.html.twig', [
@@ -47,16 +52,65 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/tourney/{id}', name: 'app_tourney_settings')]
-    public function tourneySettings(Tourney $tourney): Response
-    {
-        return $this->render('admin/tourney_settings.html.twig', []);
-    }
-
-    #[Route('/admin/tourneys', name: 'app_tourneys')]
+    #[Route('/tourneys', name: 'app_tourneys')]
     public function tourneys(): Response
     {
+        $tourneys = $this->em->getRepository(Tourney::class);
+        return $this->render('admin/tourney/tourneys.html.twig', [
+            'tourneys' => $tourneys->findAll(),
+        ]);
+    }
 
-        return $this->render('admin/tourneys.html.twig', []);
+    #[Route('/tourneys/add', name: 'app_tourney_add')]
+    public function newTourney(Request $request): RedirectResponse|Response
+    {
+        $tourney = new Tourney();
+
+        return $this->processTourney($tourney, $request, "Добавление турнира");
+    }
+
+    #[Route('/tourney/edit/{id}', name: 'app_tourney_edit')]
+    public function changeTourney(Tourney $tourney, Request $request): Response
+    {
+        return $this->processTourney($tourney, $request,  "Изменение турнира", false);
+    }
+
+    #[Route('/tourney/remove', name: 'app_tourney_remove', methods: ['POST'])]
+    public function removeTourney(Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent());
+        $id = $data->id;
+        $tourney = $this->em->getRepository(Tourney::class)->find($id);
+        if ($tourney) {
+            $this->em->remove($tourney);
+            $this->em->flush();
+            return new JsonResponse([
+                'success' => true,
+            ]);
+        }
+        return new JsonResponse([
+            'error' => "Object doesn't exists",
+        ]);
+    }
+
+    public function processTourney(Tourney $tourney, Request $request, string $pageTitle, bool $needsPersist = true): RedirectResponse|Response
+    {
+        $form = $this->createForm(TourneyType::class, $tourney);
+
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+
+            if ($needsPersist) {
+                $this->em->persist($tourney);
+            }
+            $this->em->flush();
+
+            return $this->redirectToRoute('app_tourneys');
+        }
+        // using one template for adding and editing
+        return $this->renderForm('admin/tourney/tourney_add.html.twig', [
+            'tourneyForm' => $form,
+            'title' => $pageTitle,
+        ]);
     }
 }

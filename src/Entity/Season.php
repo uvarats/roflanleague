@@ -23,9 +23,6 @@ class Season
     #[ORM\JoinColumn(nullable: false)]
     private ?Tourney $tourney = null;
 
-    #[ORM\Column]
-    private ?bool $isCurrent = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -67,15 +64,4 @@ class Season
         return $this;
     }
 
-    public function isIsCurrent(): ?bool
-    {
-        return $this->isCurrent;
-    }
-
-    public function setIsCurrent(bool $isCurrent): self
-    {
-        $this->isCurrent = $isCurrent;
-
-        return $this;
-    }
 }

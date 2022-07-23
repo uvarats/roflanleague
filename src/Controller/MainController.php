@@ -23,7 +23,11 @@ use Symfony\Component\Serializer\Serializer;
 class MainController extends AbstractController
 {
     #[Route('/', name: 'app_main')]
-    public function index(MailerInterface $mailer, TokenStorageInterface $tokenStorage, EntityManagerInterface $em): Response
+    public function index(
+        MailerInterface $mailer,
+        TokenStorageInterface $tokenStorage,
+        EntityManagerInterface $em
+    ): Response
     {
         $http = new \GuzzleHttp\Client();
         $challonge = new Challonge($http, 'CksgsGocPPx5fCAo0sbSsh3aMHnJye1lcNYgzGeN', true);

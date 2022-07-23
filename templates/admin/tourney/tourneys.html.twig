@@ -1,0 +1,68 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Управление турнирами{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container" {{ stimulus_controller('tourney', {
+        'removeUrl': path('app_tourney_remove'),
+    }) }}>
+        <div class="d-flex flex-column justify-content-center text-center">
+            <p class="h2 mb-3">Управление турнирами</p>
+            <form action="{{ path('app_tourney_add') }}">
+                <button type="submit" class="w-100 btn btn-outline-primary" value="5">Добавить турнир</button>
+            </form>
+        </div>
+        <hr>
+        {% for tourney in tourneys %}
+            <div class="tourney-object">
+                <div class="row d-flex justify-content-between row-cols-md-2 row-cols-1">
+                    <div class="col text-start d-flex flex-column">
+                        <span class="h3">{{ tourney.name }}</span>
+                        <span>Коэффициент важности: {{ tourney.impactCoefficient }}</span>
+                    </div>
+                    <div class="col d-flex flex-row justify-content-end align-items-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Действия
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Сезоны</a></li>
+                                <li><a class="dropdown-item" href="#">Участники</a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_tourney_edit', {id: tourney.id}) }}">Редактировать</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li {{ stimulus_action('tourney', 'remove', 'click') }}>
+                                    <a id="{{ tourney.id }}" class="dropdown-item">Удалить</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        {% endfor %}
+
+        <div class="modal fade" id="confirmationModal" tabindex="-1" {{ stimulus_target('tourney', 'modal')}} aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalLabel">Подтверждение</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Вы действительно хотите удалить данный турнир? Отменить изменения невозможно!
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="button" {{ stimulus_target('tourney', 'confirmButton') }} class="btn btn-danger" {{ stimulus_action('tourney', 'confirm') }}>Удалить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

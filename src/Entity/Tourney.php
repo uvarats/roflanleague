@@ -15,14 +15,20 @@ class Tourney
     #[ORM\Column()]
     private ?int $id = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, unique: true)]
     private ?string $name = null;
-
-    #[ORM\OneToMany(mappedBy: 'tourney', targetEntity: User::class)]
-    private Collection $participants;
 
     #[ORM\OneToMany(mappedBy: 'tourney', targetEntity: Season::class)]
     private Collection $seasons;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tourneys')]
+    private Collection $participants;
+
+    #[ORM\Column]
+    private ?float $impactCoefficient = null;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Season $currentSeason = null;
 
     public function __construct()
     {
@@ -43,36 +49,6 @@ class Tourney
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getParticipants(): Collection
-    {
-        return $this->participants;
-    }
-
-    public function addParticipant(User $participant): self
-    {
-        if (!$this->participants->contains($participant)) {
-            $this->participants[] = $participant;
-            $participant->setTourney($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParticipant(User $participant): self
-    {
-        if ($this->participants->removeElement($participant)) {
-            // set the owning side to null (unless already changed)
-            if ($participant->getTourney() === $this) {
-                $participant->setTourney(null);
-            }
-        }
 
         return $this;
     }
@@ -103,6 +79,54 @@ class Tourney
                 $season->setTourney(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(User $participant): self
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants[] = $participant;
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(User $participant): self
+    {
+        $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function getImpactCoefficient(): ?float
+    {
+        return $this->impactCoefficient;
+    }
+
+    public function setImpactCoefficient(float $impactCoefficient): self
+    {
+        $this->impactCoefficient = $impactCoefficient;
+
+        return $this;
+    }
+
+    public function getCurrentSeason(): ?Season
+    {
+        return $this->currentSeason;
+    }
+
+    public function setCurrentSeason(?Season $currentSeason): self
+    {
+        $this->currentSeason = $currentSeason;
 
         return $this;
     }

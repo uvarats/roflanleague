@@ -43,9 +43,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
 
-    #[ORM\ManyToOne(inversedBy: 'participants')]
-    private ?Tourney $tourney = null;
-
     #[ORM\ManyToMany(targetEntity: Badge::class, mappedBy: 'users')]
     private Collection $badges;
 
@@ -55,13 +52,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATETIME_MUTABLE, options: ['default' => '2022-03-13 18:22:35'])]
     private ?\DateTimeInterface $registerDate = null;
 
-    #[ORM\Column(options: ['default' => 0])]
+    #[ORM\Column(options: ['default' => 100])]
     private ?int $rating = null;
+
+    #[ORM\ManyToMany(targetEntity: Tourney::class, mappedBy: 'participants')]
+    private Collection $tourneys;
 
     public function __construct()
     {
         $this->seasonHistories = new ArrayCollection();
         $this->badges = new ArrayCollection();
+        $this->tourneys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,18 +189,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getTourney(): ?Tourney
-    {
-        return $this->tourney;
-    }
-
-    public function setTourney(?Tourney $tourney): self
-    {
-        $this->tourney = $tourney;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Badge>
      */
@@ -259,6 +248,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRating(int $rating): self
     {
         $this->rating = $rating;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tourney>
+     */
+    public function getTourneys(): Collection
+    {
+        return $this->tourneys;
+    }
+
+    public function addTourney(Tourney $tourney): self
+    {
+        if (!$this->tourneys->contains($tourney)) {
+            $this->tourneys[] = $tourney;
+            $tourney->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTourney(Tourney $tourney): self
+    {
+        if ($this->tourneys->removeElement($tourney)) {
+            $tourney->removeParticipant($this);
+        }
 
         return $this;
     }
