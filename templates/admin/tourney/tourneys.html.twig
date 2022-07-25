@@ -30,7 +30,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="#">Сезоны</a></li>
-                                <li><a class="dropdown-item" href="#">Участники</a></li>
+                                <li><a class="dropdown-item" href="{{ path('app_tourney_participants', { id: tourney.id }) }}">Участники</a></li>
                                 <li><a class="dropdown-item" href="{{ path('app_tourney_edit', {id: tourney.id}) }}">Редактировать</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li {{ stimulus_action('tourney', 'remove', 'click') }}>

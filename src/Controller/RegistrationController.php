@@ -53,7 +53,8 @@ class RegistrationController extends AbstractController
             );
 
             $user->setIsBanned(false)
-                ->setRegisterDate(new \DateTime());
+                ->setRegisterDate(new \DateTime())
+                ->setRating(10);
 
             $entityManager->persist($user);
             $entityManager->flush();

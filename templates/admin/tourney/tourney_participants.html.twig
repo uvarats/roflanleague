@@ -1,7 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Участники турнира{% endblock %}
+{% block title %}Участники турнира {{ tourney.name }}{% endblock %}
 
 {% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex flex-column justify-content-center text-center">
+            <p class="h2 mb-3">Участники турнира "{{ tourney.name }}" ({{ tourney.participants|length }})</p>
+            <form action="{{ path('app_tourney_participants_add', { id: tourney.id }) }}">
+                <button class="btn btn-outline-primary w-100">Добавить участника</button>
+            </form>
+        </div>
+        {% for participant in tourney.participants %}
+            {{ participant.username }}
+        {% endfor %}
+    </div>
+
+    {{ include('footer.html.twig') }}
 
 {% endblock %}

@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Tourney;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -69,6 +70,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $em->createQuery('SELECT u FROM App\Entity\User u')
             ->setFirstResult($firstResult)
             ->setMaxResults($resultsPerPage)
+            ->getResult();
+    }
+    public function getUsersNotInTourney(Tourney $tourney, int $page = 1, int $resultsPerPage = 30) {
+        $em = $this->getEntityManager();
+        $firstResult = ($page - 1) * $resultsPerPage;
+        return $this->createQueryBuilder("user")
+            ->where(':tourney NOT MEMBER OF user.tourneys')
+            ->setParameter('tourney', $tourney)
+            ->setFirstResult($firstResult)
+            ->setMaxResults($resultsPerPage)
+            ->getQuery()
             ->getResult();
     }
 //    /**

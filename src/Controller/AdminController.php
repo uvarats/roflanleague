@@ -6,6 +6,7 @@ use App\Entity\Tourney;
 use App\Entity\User;
 use App\Form\TourneyType;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -111,6 +112,25 @@ class AdminController extends AbstractController
         return $this->renderForm('admin/tourney/tourney_add.html.twig', [
             'tourneyForm' => $form,
             'title' => $pageTitle,
+        ]);
+    }
+    #[Route('/tourney/{id}/participants', name: 'app_tourney_participants')]
+    public function tourneyParticipants(int $id): Response
+    {
+        $tourneys = $this->em->getRepository(Tourney::class);
+        $tourney = $tourneys->getWithParticipants($id);
+        return $this->render('admin/tourney/tourney_participants.html.twig', [
+            'tourney' => $tourney,
+        ]);
+    }
+
+    #[Route('/tourney/{id}/participants/add', name: 'app_tourney_participants_add')]
+    public function tourneyAddParticipants(Tourney $tourney) {
+        $users = $this->em->getRepository(User::class);
+        $availableUsers = $users->getUsersNotInTourney($tourney);
+        return $this->render('admin/tourney/tourney_participants_add.html.twig', [
+            'tourney' => $tourney,
+            'firstAvailable' => $availableUsers,
         ]);
     }
 }

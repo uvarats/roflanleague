@@ -39,6 +39,15 @@ class TourneyRepository extends ServiceEntityRepository
         }
     }
 
+    public function getWithParticipants(int $id): Tourney {
+        $em = $this->getEntityManager();
+        $query = $this->createQueryBuilder('tourney')
+            ->leftJoin('tourney.participants', 'participants')
+            ->where('tourney.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery();
+        return $query->getSingleResult();
+    }
 //    /**
 //     * @return Tourney[] Returns an array of Tourney objects
 //     */

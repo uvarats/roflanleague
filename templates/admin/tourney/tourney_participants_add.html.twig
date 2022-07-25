@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавление участников в турнир{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex justify-content-center text-center flex-column">
+            <span class="h2">Добавление участников в турнир "{{ tourney.name }}"</span>
+            <form action="{{ path('app_tourney_participants', { id: tourney.id }) }}">
+                <button type="submit" class="btn btn-outline-primary w-100">Назад на страницу турнира</button>
+            </form>
+        </div>
+        <hr>
+        {% for user in firstAvailable %}
+            <div>
+                <div class="row d-flex align-items-center justify-content-between row-cols-md-2 row-cols-1">
+                    <div class="d-flex flex-row col">
+                        <img class="rounded-circle" width="64" height="64" src="https://mc-heads.net/avatar/{{ user.username }}">
+                        <span class="h2 ms-3">{{ user.username }}</span>
+                    </div>
+                    <div class="col d-flex flex-row justify-content-end">
+                        <button class="btn btn-primary">Добавить</button>
+                    </div>
+                </div>
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}
