@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Рейтинг участников{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Ник</th>
+                <th scope="col">Рейтинг</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>
+                        <a class="link-dark text-decoration-none" href="{{ path('app_concrete_profile', { id: user.id }) }}">{{ user.username }}</a>
+                    </td>
+                    <td>{{ user.rating }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

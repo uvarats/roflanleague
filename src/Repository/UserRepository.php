@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Tourney;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -78,6 +80,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->createQueryBuilder("user")
             ->where(':tourney NOT MEMBER OF user.tourneys')
             ->setParameter('tourney', $tourney)
+            ->setFirstResult($firstResult)
+            ->setMaxResults($resultsPerPage)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function getRatingTop(int $page = 1, int $resultsPerPage = 50) : array
+    {
+        $firstResult = ($page - 1) * $resultsPerPage;
+        return $this->createQueryBuilder("user")
+            ->orderBy('user.rating', 'DESC')
             ->setFirstResult($firstResult)
             ->setMaxResults($resultsPerPage)
             ->getQuery()

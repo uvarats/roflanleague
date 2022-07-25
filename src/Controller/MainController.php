@@ -22,17 +22,34 @@ use Symfony\Component\Serializer\Serializer;
 
 class MainController extends AbstractController
 {
+
+    public function __construct(
+        private MailerInterface $mailer,
+        private TokenStorageInterface $tokenStorage,
+        private EntityManagerInterface $em
+    )
+    {
+    }
+
     #[Route('/', name: 'app_main')]
-    public function index(
-        MailerInterface $mailer,
-        TokenStorageInterface $tokenStorage,
-        EntityManagerInterface $em
-    ): Response
+    public function index(): Response
     {
         $http = new \GuzzleHttp\Client();
         $challonge = new Challonge($http, 'CksgsGocPPx5fCAo0sbSsh3aMHnJye1lcNYgzGeN', true);
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
+        ]);
+    }
+
+    #[Route('/rating/{page}', name: 'app_rating')]
+    public function rating(int $page = 1) {
+        $users = $this->em->getRepository(User::class);
+        /** @var User[] $top */
+        $top = $users->getRatingTop($page);
+
+        return $this->render('main/rating.html.twig', [
+            'users' => $top,
+            'page' => $page,
         ]);
     }
 }

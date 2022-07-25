@@ -15,7 +15,7 @@
                 <li><a href="{{ path('app_main') }}" class="nav-link px-2 link-secondary">Домой</a></li>
                 <li><a href="#" class="nav-link px-2 link-dark">Сезон</a></li>
                 <li><a href="#" class="nav-link px-2 link-dark">История</a></li>
-                <li><a href="#" class="nav-link px-2 link-dark">Рейтинг</a></li>
+                <li><a href="{{ path('app_rating') }}" class="nav-link px-2 link-dark">Рейтинг</a></li>
 {#                <li><a href="#" class="nav-link px-2 link-dark">About</a></li>#}
             </ul>
 
@@ -23,7 +23,7 @@
                 {% if app.user %}
                     <div class="dropdown text-end d-flex justify-content-center justify-content-md-end">
                         <a href="#" class="d-flex justify-content-center justify-content-md-end align-items-center link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="https://mc-heads.net/avatar/{{ app.user.username }}" alt="mdo" width="32" height="32" class="rounded-circle">
+                            <img src="https://cravatar.eu/avatar/{{ app.user.username }}/128" alt="mdo" width="32" height="32" class="rounded-circle">
                             <span class="ms-2">{{ app.user.username }}</span>
                         </a>
                         <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1" style="">
