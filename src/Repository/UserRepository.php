@@ -59,9 +59,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->add($user, true);
     }
 
-    public function getCount() {
+    public function getCount(): int
+    {
         return $this->createQueryBuilder('u')
             ->select('count(u.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    public function getCountVerifiedAndNotBanned() {
+        return $this->createQueryBuilder('user')
+            ->select('count(user.id)')
+            ->where('user.isBanned = false')
+            ->andWhere('user.isVerified = true')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -90,11 +100,24 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $firstResult = ($page - 1) * $resultsPerPage;
         return $this->createQueryBuilder("user")
+            ->select('user')
+            ->where('user.isVerified = true')
+            ->andWhere('user.isBanned = false')
             ->orderBy('user.rating', 'DESC')
             ->setFirstResult($firstResult)
             ->setMaxResults($resultsPerPage)
             ->getQuery()
             ->getResult();
+    }
+    public function getTopPosition(User $user) {
+        return $this->createQueryBuilder('u')
+            ->select('count(u) + 1')
+            ->where('u.isBanned = false')
+            ->andWhere('u.isVerified = true')
+            ->andWhere('u.rating > :userRating')
+            ->setParameter('userRating', $user->getRating())
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 //    /**
 //     * @return User[] Returns an array of User objects

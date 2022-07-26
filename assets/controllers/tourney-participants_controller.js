@@ -5,6 +5,7 @@ export default class extends Controller {
     static values = {
         addUrl: String,
         getUrl: String,
+        removeUrl: String,
     };
     static targets = [];
 
@@ -19,6 +20,14 @@ export default class extends Controller {
     }
 
     addUser(event) {
+        this.userAction(event, this.addUrlValue)
+    }
+
+    removeUser(event) {
+        this.userAction(event, this.removeUrlValue);
+    }
+
+    userAction(event, url) {
         let userId = event.target.value;
         let userElement = event.target.closest('.user-object');
         let oldButtonData = event.target.innerHTML;
@@ -26,7 +35,7 @@ export default class extends Controller {
         event.target.innerHTML = this.spinner;
         event.target.disabled = true;
 
-        axios.post(this.addUrlValue, {
+        axios.post(url, {
             id: userId,
         }).then(function (response) {
             if (response.data.success) {

@@ -54,4 +54,20 @@ class AdminController extends AbstractController
         ]);
     }
 
+    #[Route('/user/{id}/switch', name: 'app_admin_user_switch', methods: ['POST'])]
+    public function switchUser(int $id): JsonResponse
+    {
+        $user = $this->em->getRepository(User::class)->find($id);
+        if ($user) {
+            $userStatus = $user->isBanned();
+            $user->setIsBanned(!$userStatus);
+            $this->em->flush();
+            return $this->json([
+                'newStatus' => !$userStatus,
+            ]);
+        }
+        return $this->json([
+            'error' => 'User not found.',
+        ]);
+    }
 }

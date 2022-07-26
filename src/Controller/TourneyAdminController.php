@@ -108,13 +108,30 @@ class TourneyAdminController extends AbstractController
     #[Route('/tourney/{id}/add-participant', name: 'app_tourney_user_add')]
     public function tourneyAddSingleParticipant(Tourney $tourney, Request $request): JsonResponse
     {
+        return $this->participantsAction($tourney, $request, 'add');
+    }
+
+    #[Route('/tourney/{id}/remove-participant', name: 'app_tourney_user_remove')]
+    public function removeParticipant(Tourney $tourney, Request $request): JsonResponse
+    {
+        return $this->participantsAction($tourney, $request, 'remove');
+    }
+
+    public function participantsAction(Tourney $tourney, Request $request, string $action): JsonResponse
+    {
         $data = json_decode($request->getContent());
         $id = $data->id;
         if ($id) {
             $users = $this->em->getRepository(User::class);
             $user = $users->find($id);
             if ($user) {
-                $tourney->addParticipant($user);
+                if($action === 'add') {
+                    $tourney->addParticipant($user);
+                }
+
+                if($action === 'remove') {
+                    $tourney->removeParticipant($user);
+                }
                 $this->em->flush();
                 return $this->json([
                     'success' => true,

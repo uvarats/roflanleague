@@ -7,7 +7,7 @@
     {{ include('header.html.twig') }}
 
     <div class="container">
-        <table class="table table-hover">
+        <table class="table table-hover table-striped">
             <thead>
             <tr>
                 <th scope="col">#</th>
@@ -18,7 +18,7 @@
             <tbody>
             {% for user in users %}
                 <tr>
-                    <th scope="row">{{ loop.index }}</th>
+                    <th scope="row">{{ loop.index + (currentPage - 1) * usersPerPage }}</th>
                     <td>
                         <a class="link-dark text-decoration-none" href="{{ path('app_concrete_profile', { id: user.id }) }}">{{ user.username }}</a>
                     </td>
@@ -27,6 +27,26 @@
             {% endfor %}
             </tbody>
         </table>
+        <span class="text-muted">В данном топе отображаются только незаблокированные пользователи, подтвердившие свою почту</span>
+        {% if pagesCount > 1 %}
+            <div class="d-flex justify-content-center justify-content-md-start">
+                <nav aria-label="...">
+                    <ul class="pagination">
+                        <li class="page-item {% if currentPage == 1 %}disabled{% endif %}">
+                            <a {% if currentPage > 1%}href="{{ path('app_rating', {page: currentPage - 1}) }}"{% endif %} class="page-link"><-</a>
+                        </li>
+                        {% for i in 1..pagesCount %}
+                            <li class="page-item {% if i == currentPage %}active{% endif %}">
+                                <a class="page-link" href="{{ path('app_rating', {page: i}) }}">{{ i }}</a>
+                            </li>
+                        {% endfor %}
+                        <li class="page-item {% if currentPage == pagesCount %}disabled{% endif %}">
+                            <a {% if currentPage < pagesCount %}href="{{ path('app_rating', {page: currentPage + 1}) }}"{% endif %} class="page-link" href="#">-></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        {% endif %}
     </div>
 
     {{ include('footer.html.twig') }}
