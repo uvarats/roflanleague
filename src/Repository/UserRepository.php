@@ -114,7 +114,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->select('count(u) + 1')
             ->where('u.isBanned = false')
             ->andWhere('u.isVerified = true')
-            ->andWhere('u.rating > :userRating')
+            ->andWhere('u.rating >= :userRating')
             ->setParameter('userRating', $user->getRating())
             ->getQuery()
             ->getSingleScalarResult();

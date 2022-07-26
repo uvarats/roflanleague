@@ -44,7 +44,6 @@ class MainController extends AbstractController
     #[Route('/rating/{page}', name: 'app_rating')]
     public function rating(int $page = 1) {
         $users = $this->em->getRepository(User::class);
-        dd($users->getTopPosition($users->find(1)));
         $usersPerPage = 50;
         $count = $users->getCountVerifiedAndNotBanned();
         /** @var User[] $top */
