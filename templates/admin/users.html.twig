@@ -14,7 +14,7 @@
             {% for user in users %}
                 <a href="{{ path('app_admin_manage_user', {id: user.id}) }}" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 align-items-center">
-                        <h5 class="mb-1">{{ user.username }}</h5>
+                        <h5 class="mb-1">{{ user.username }} (ID: {{ user.id }})</h5>
                         {% if user.isBanned %}
                             <span class="ms-2 badge rounded-pill bg-danger">Забанен</span>
                         {% endif %}

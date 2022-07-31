@@ -15,7 +15,7 @@ class Badge
     #[ORM\Column()]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 150)]
     private ?string $text = null;
 
     #[ORM\Column(length: 9)]
@@ -23,6 +23,9 @@ class Badge
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'badges')]
     private Collection $users;
+
+    #[ORM\Column(length: 25)]
+    private ?string $name = null;
 
     public function __construct()
     {
@@ -78,6 +81,18 @@ class Badge
     public function removeUser(User $user): self
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

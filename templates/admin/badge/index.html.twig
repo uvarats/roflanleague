@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Управление бейджами{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container" {{ stimulus_controller('badge') }}>
+        <div class="d-flex flex-column justify-content-center text-center">
+            <span class="h2 mb-3">Управление бейджами</span>
+            <form action="{{ path('app_admin_badges_add') }}" class="mb-2">
+                <button type="submit" class="btn btn-outline-primary w-100">Добавить бейдж</button>
+            </form>
+            <form action="{{ path('app_admin') }}">
+                <button type="submit" class="btn btn-outline-secondary w-100">Назад в панель</button>
+            </form>
+            <hr>
+        </div>
+        <div id="badge-container">
+            {% for badge in badges %}
+                <div class="badge-object">
+                    <div class="row d-flex align-items-center justify-content-between row-cols-md-2 row-cols-1">
+                        <div class="col d-flex flex-column">
+                            <span class="h3">{{ badge.name }} (ID: {{ badge.id }})</span>
+                            <span>Текст: {{ badge.text }}</span>
+                            <span>
+                                Внешний вид:
+                                <span class="badge rounded-pill"
+                                      style="background-color: {{ badge.hexCode }}"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="bottom"
+                                      data-bs-title="{{ badge.text }}"
+                                >
+                                    {{ badge.name }}
+                                </span>
+                            </span>
+                        </div>
+                        <div class="col d-flex flex-row justify-content-end align-items-center mt-3 mt-md-0">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Действия
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Добавить пользователя</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('app_admin_badges_edit', {id: badge.id}) }}">Редактировать</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a id="{{ badge.id }}" class="dropdown-item">Удалить</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

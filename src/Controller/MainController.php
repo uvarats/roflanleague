@@ -42,7 +42,8 @@ class MainController extends AbstractController
     }
 
     #[Route('/rating/{page}', name: 'app_rating')]
-    public function rating(int $page = 1) {
+    public function rating(int $page = 1): Response
+    {
         $users = $this->em->getRepository(User::class);
         $usersPerPage = 50;
         $count = $users->getCountVerifiedAndNotBanned();

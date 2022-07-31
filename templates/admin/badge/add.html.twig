@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ pageTitle }}{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div>
+            {{ form_start(badgeForm) }}
+
+            <div class="text-danger mb-3">
+                {{ form_errors(badgeForm) }}
+            </div>
+
+            <div class="form-floating mb-3">
+                {{ form_widget(badgeForm.name, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Имя'
+                    }
+                }) }}
+                {{ form_label(badgeForm.name) }}
+                <div class="text-danger">
+                    {{ form_errors(badgeForm.name) }}
+                </div>
+            </div>
+            <div class="form-floating mb-3">
+                {{ form_widget(badgeForm.text, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Текст'
+                    }
+                }) }}
+                {{ form_label(badgeForm.text) }}
+                <div class="text-danger">
+                    {{ form_errors(badgeForm.text) }}
+                </div>
+            </div>
+            <div class="form-floating mb-3">
+                {{ form_widget(badgeForm.hexCode, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 'Hex-код'
+                    }
+                }) }}
+                {{ form_label(badgeForm.hexCode) }}
+                <div class="text-danger">
+                    {{ form_errors(badgeForm.hexCode) }}
+                </div>
+            </div>
+
+            {{ form_widget(badgeForm.submit, {
+                'attr': {
+                    'class': 'btn btn-primary',
+                }
+            }) }}
+
+            {{ form_end(badgeForm) }}
+        </div>
+    </div>
+
+    {{ include('footer.html.twig')}}
+
+{% endblock %}

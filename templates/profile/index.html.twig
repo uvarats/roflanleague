@@ -7,7 +7,25 @@
     {{ include('header.html.twig') }}
 
     <div class="container">
-        {{ user.username }}
+        <div class="d-flex flex-row mt-3 mb-3">
+            <img height="128" width="128" class="rounded-circle" src="https://cravatar.eu/avatar/{{ user.username }}/128">
+            <div class="d-flex flex-column">
+                <span class="text-muted h2 ms-2">{{ user.username }}</span>
+                {% for badge in user.badges %}
+
+                {% endfor %}
+            </div>
+        </div>
+        <div class="d-flex flex-row bg-light p-3 pe-0 rounded-3">
+            <div class="d-flex flex-column">
+                <span class="display-6">Позиция в топе</span>
+                <span class="display-5">#{{ position }}</span>
+            </div>
+            <div class="d-flex flex-column ms-md-5 ms-3">
+                <span class="display-6">Рейтинг</span>
+                <span class="display-5">{{ user.rating }}</span>
+            </div>
+        </div>
     </div>
 
     {{ include('footer.html.twig') }}
