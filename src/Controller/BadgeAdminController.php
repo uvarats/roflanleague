@@ -6,6 +6,7 @@ use App\Entity\Badge;
 use App\Form\BadgeType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,7 +22,8 @@ class BadgeAdminController extends AbstractController
     }
 
     #[Route('', name: 'app_admin_badges')]
-    public function main() {
+    public function main(): Response
+    {
         $badges = $this->em->getRepository(Badge::class);
         return $this->render('admin/badge/index.html.twig', [
             'badges' => $badges->findAll(),
@@ -29,14 +31,41 @@ class BadgeAdminController extends AbstractController
     }
 
     #[Route('/add', name: 'app_admin_badges_add')]
-    public function add(Request $request) {
+    public function add(Request $request): RedirectResponse|Response
+    {
         $badge = new Badge();
 
         return $this->badgeAction($badge, $request);
     }
     #[Route('/edit/{id}', name: 'app_admin_badges_edit')]
-    public function edit(Badge $badge, Request $request) {
+    public function edit(Badge $badge, Request $request): RedirectResponse|Response
+    {
         return $this->badgeAction($badge, $request, 'Редактирование бейджа');
+    }
+
+    #[Route('/remove-badge', name: 'app_admin_badge_remove', methods: [ 'POST' ])]
+    public function removeBadge(Request $request): JsonResponse
+    {
+        $content = json_decode($request->getContent());
+        $id = $content->id;
+
+        $errorMsg = "Please, provide an id to request";
+
+        if ($id) {
+            $badges = $this->em->getRepository(Badge::class);
+            $badge = $badges->find($id);
+            if($badge) {
+                $this->em->remove($badge);
+                $this->em->flush();
+                return $this->json([
+                    "success" => true,
+                ]);
+            }
+            $errorMsg = "Badge object not found by this id";
+        }
+        return $this->json([
+            "error" => $errorMsg,
+        ]);
     }
 
     public function badgeAction(

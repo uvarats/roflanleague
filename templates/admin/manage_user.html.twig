@@ -6,10 +6,11 @@
 
     {{ include('header.html.twig') }}
     <div class="container" {{ stimulus_controller('user', {
-        'switchUrl': path('app_admin_user_switch', { id: user.id })
+        'switchUrl': path('app_admin_user_switch', { id: user.id }),
+        'verifyUrl': path('app_admin_user_verify', { id: user.id }),
     }) }}>
         <div class="d-flex justify-content-center text-center mb-3">
-            <p class="h2">Управление пользователем {{ user.username }}</p>
+            <p class="h2">Управление пользователем</p>
         </div>
         <div class="row mb-3">
             <div class="col-auto">
@@ -21,7 +22,7 @@
                 </a>
                 <p>Дата регистрации: {{ user.registerDate|date('d.m.Y H:i:s') }}</p>
                 <p>Почта: {{ user.email }}</p>
-                <p>Статус почты:
+                <p id="verify-status">Статус почты:
                     {% if user.verified %}
                         <span class="text-success">подтверждена</span>
                     {% else %}
@@ -39,12 +40,15 @@
             <div class="col rounded-3 mb-md-0 mb-3">
                 <div class="p-4 text-center d-flex flex-column">
                     <p>Действия с аккаунтом</p>
+                    <button class="btn btn-outline-primary mb-3">Добавить бейдж</button>
+                    {% if not user.verified %}
+                        <button {{ stimulus_action('user', 'verify')}} class="btn btn-outline-success mb-3">Подтвердить почту</button>
+                    {% endif %}
                     {% if not user.isBanned %}
                         <button {{ stimulus_action('user', 'switchUserStatus') }} class="btn btn-outline-warning mb-3 {% if app.user.id == user.id %}disabled{% endif %}">Заблокировать</button>
                     {% else %}
                         <button class="btn btn-outline-success mb-3" {{ stimulus_action('user', 'switchUserStatus') }}>Разблокировать</button>
                     {% endif %}
-                    <button class="btn btn-outline-danger">Удалить аккаунт</button>
                 </div>
             </div>
         </div>

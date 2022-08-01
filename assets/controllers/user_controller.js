@@ -4,10 +4,14 @@ import axios from "axios";
 export default class extends Controller {
     static values = {
         switchUrl: String,
+        verifyUrl: String,
     };
 
     banned = `Блокировка: <span class="text-danger">забанен</span>`;
     notBanned = `Блокировка: <span class="text-success">нет</span>`;
+
+    verified = `<p>Статус почты: <span class="text-success">подтверждена</span></p>`;
+    notVerified = `<p>Статус почты: <span class="text-danger">не подтверждена</span></p>`;
 
     switchUserStatus(event) {
         let banStatus = document.getElementById('ban-status');
@@ -31,6 +35,20 @@ export default class extends Controller {
                     event.target.innerHTML = "Заблокировать";
                     event.target.classList.replace('btn-outline-success', 'btn-outline-warning');
                     banStatus.innerHTML = notBanned;
+                }
+            });
+    }
+
+    verify(event) {
+        let verifyStatus = document.getElementById('verify-status');
+        let verified = this.verified;
+        let notVerified = this.notVerified;
+
+        axios.post(this.verifyUrlValue)
+            .then(function (response) {
+                if (response.data.success) {
+                    event.target.remove();
+                    verifyStatus.innerHTML = verified;
                 }
             });
     }

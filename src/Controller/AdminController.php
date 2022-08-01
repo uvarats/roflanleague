@@ -67,7 +67,23 @@ class AdminController extends AbstractController
             ]);
         }
         return $this->json([
-            'error' => 'User not found.',
+            'error' => 'User not found',
+        ]);
+    }
+
+    #[Route('/user/{id}/verify', name: 'app_admin_user_verify', methods: [ "POST" ])]
+    public function verify(int $id): JsonResponse
+    {
+        $user = $this->em->getRepository(User::class)->find($id);
+        if ($user) {
+            $user->setIsVerified(true);
+            $this->em->flush();
+            return $this->json([
+                'success' => true,
+            ]);
+        }
+        return $this->json([
+            'error' => 'User not found',
         ]);
     }
 }
