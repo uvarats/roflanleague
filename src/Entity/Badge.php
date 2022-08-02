@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\BadgeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BadgeRepository::class)]
@@ -26,6 +27,9 @@ class Badge
 
     #[ORM\Column(length: 25)]
     private ?string $name = null;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $priority = null;
 
     public function __construct()
     {
@@ -93,6 +97,18 @@ class Badge
     public function setName(string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getPriority(): ?int
+    {
+        return $this->priority;
+    }
+
+    public function setPriority(int $priority): self
+    {
+        $this->priority = $priority;
 
         return $this;
     }

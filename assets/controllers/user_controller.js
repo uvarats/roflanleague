@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 import axios from "axios";
+import {Tooltip} from "bootstrap";
 
 export default class extends Controller {
     static values = {
@@ -7,11 +8,19 @@ export default class extends Controller {
         verifyUrl: String,
     };
 
+    // для добавления тултипов новых бейджей
+    tooltipList;
+
     banned = `Блокировка: <span class="text-danger">забанен</span>`;
     notBanned = `Блокировка: <span class="text-success">нет</span>`;
 
     verified = `<p>Статус почты: <span class="text-success">подтверждена</span></p>`;
     notVerified = `<p>Статус почты: <span class="text-danger">не подтверждена</span></p>`;
+
+    connect() {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        this.tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new Tooltip(tooltipTriggerEl));
+    }
 
     switchUserStatus(event) {
         let banStatus = document.getElementById('ban-status');

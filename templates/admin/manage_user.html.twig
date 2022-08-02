@@ -36,11 +36,27 @@
                         <span class="text-success">нет</span>
                     {% endif %}
                 </p>
+                <p id="badges">
+                    Бейджи:
+                    {% for badge in user.badges %}
+                        <span class="badge rounded-pill"
+                              style="background-color: {{ badge.hexCode }}"
+                              data-bs-toggle="tooltip"
+                              data-bs-placement="bottom"
+                              data-bs-title="{{ badge.text }}"
+                        >
+                                    {{ badge.name }}
+                                </span>
+                    {% endfor %}
+                </p>
             </div>
             <div class="col rounded-3 mb-md-0 mb-3">
                 <div class="p-4 text-center d-flex flex-column">
                     <p>Действия с аккаунтом</p>
-                    <button {{ stimulus_action('user', 'addBadge') }} class="btn btn-outline-primary mb-3">Добавить бейдж</button>
+                    <div class="d-flex flex-row align-items-stretch mb-3">
+                        <input class="form-control" type="number" step="1" placeholder="ID бейджа">
+                        <button {{ stimulus_action('user', 'addBadge') }} class="btn btn-outline-primary ms-3">Добавить бейдж</button>
+                    </div>
                     {% if not user.verified %}
                         <button {{ stimulus_action('user', 'verify')}} class="btn btn-outline-success mb-3">Подтвердить почту</button>
                     {% endif %}
