@@ -46,8 +46,7 @@ class BadgeAdminController extends AbstractController
     #[Route('/remove-badge', name: 'app_admin_badge_remove', methods: [ 'POST' ])]
     public function removeBadge(Request $request): JsonResponse
     {
-        $content = json_decode($request->getContent());
-        $id = $content->id;
+        $id = $request->request->get('id');
 
         $errorMsg = "Please, provide an id to request";
 

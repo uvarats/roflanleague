@@ -52,4 +52,13 @@ export default class extends Controller {
                 }
             });
     }
+
+    addBadge(event) {
+        let params = new URLSearchParams();
+        params.append('id', 132);
+
+        axios.post('/post-test', params).then(function (response) {
+            console.log(response.data);
+        });
+    }
 }

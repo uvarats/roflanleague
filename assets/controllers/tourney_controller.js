@@ -17,8 +17,6 @@ export default class extends Controller {
     }
 
     remove(event) {
-        let idSpan = document.getElementById('removingId');
-
         this.relatedTarget = event.target;
 
         this.confirmModal.show();
@@ -38,12 +36,14 @@ export default class extends Controller {
         confirmButton.disabled = true;
 
         let tourneyId = this.relatedTarget.id;
-        let removeUrl = this.removeUrlValue;
 
         let modal = this.confirmModal;
 
+        let data = new URLSearchParams();
+        data.append('id', tourneyId);
+
         console.log(tourneyId);
-        axios.post(this.removeUrlValue, { id: tourneyId })
+        axios.post(this.removeUrlValue, data)
             .then(
                 function (response) {
                     confirmButton.innerHTML = oldButtonContent;

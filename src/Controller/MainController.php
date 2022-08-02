@@ -11,6 +11,8 @@ use Reflex\Challonge\Challonge;
 use Reflex\Challonge\DTO\MatchDto;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
@@ -38,6 +40,14 @@ class MainController extends AbstractController
         $challonge = new Challonge($http, 'CksgsGocPPx5fCAo0sbSsh3aMHnJye1lcNYgzGeN', true);
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
+        ]);
+    }
+
+    #[Route('/post-test', name: 'app_post_test')]
+    public function test(Request $request): JsonResponse
+    {
+        return $this->json([
+            'id' => $request->request->get('id'),
         ]);
     }
 

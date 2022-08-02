@@ -42,8 +42,11 @@ export default class extends Controller {
 
         let modal = this.confirmModal;
 
+        let data = new URLSearchParams();
+        data.append('id', badgeId);
+
         console.log(badgeId);
-        axios.post(this.removeBadgeUrlValue, { id: badgeId })
+        axios.post(this.removeBadgeUrlValue, data)
             .then(
                 function (response) {
                     confirmButton.innerHTML = oldButtonContent;

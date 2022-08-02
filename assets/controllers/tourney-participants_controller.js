@@ -35,9 +35,11 @@ export default class extends Controller {
         event.target.innerHTML = this.spinner;
         event.target.disabled = true;
 
-        axios.post(url, {
-            id: userId,
-        }).then(function (response) {
+        let data = new URLSearchParams();
+        data.append('id', userId);
+
+        axios.post(url, data)
+            .then(function (response) {
             if (response.data.success) {
                 userElement.remove();
             }
@@ -51,9 +53,11 @@ export default class extends Controller {
     getAdditionalUsers(event) {
         this.page++;
 
-        axios.post(this.getUrlValue, {
-            page: this.page,
-        }).then(function (response) {
+        let data = new URLSearchParams();
+        data.append('page', this.page);
+
+        axios.post(this.getUrlValue, data)
+            .then(function (response) {
             if (response.data.length > 0) {
                 let container = document.getElementById('users-container');
                 response.data.forEach(function (element) {

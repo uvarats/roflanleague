@@ -49,8 +49,7 @@ class TourneyAdminController extends AbstractController
     #[Route('/tourney/remove', name: 'app_tourney_remove', methods: ['POST'])]
     public function removeTourney(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent());
-        $id = $data->id;
+        $id = $request->request->get('id');
         $tourney = $this->em->getRepository(Tourney::class)->find($id);
         if ($tourney) {
             $this->em->remove($tourney);
@@ -80,7 +79,7 @@ class TourneyAdminController extends AbstractController
         }
         // using one template for adding and editing
         return $this->renderForm('admin/tourney/tourney_add.html.twig', [
-            'tourneyForm' => $form,
+            'tourneyForm' => $form->createView(),
             'title' => $pageTitle,
         ]);
     }
@@ -119,8 +118,7 @@ class TourneyAdminController extends AbstractController
 
     public function participantsAction(Tourney $tourney, Request $request, string $action): JsonResponse
     {
-        $data = json_decode($request->getContent());
-        $id = $data->id;
+        $id = $request->request->get('id');
         if ($id) {
             $users = $this->em->getRepository(User::class);
             $user = $users->find($id);
@@ -149,8 +147,7 @@ class TourneyAdminController extends AbstractController
     #[Route('/tourney/{id}/participants/get', name: 'app_tourney_participants_get', methods: ["POST"])]
     public function getAdditionalParticipants(Tourney $tourney, Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent());
-        $page = $data->page;
+        $page = $request->request->get('page');
         if($page) {
             $users = $this->em->getRepository(User::class);
             $additionalUsers = $users->getUsersNotInTourney($tourney, $page);
