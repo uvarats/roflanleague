@@ -79,7 +79,7 @@ class TourneyAdminController extends AbstractController
         }
         // using one template for adding and editing
         return $this->renderForm('admin/tourney/tourney_add.html.twig', [
-            'tourneyForm' => $form->createView(),
+            'tourneyForm' => $form,
             'title' => $pageTitle,
         ]);
     }

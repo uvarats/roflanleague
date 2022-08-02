@@ -43,14 +43,6 @@ class MainController extends AbstractController
         ]);
     }
 
-    #[Route('/post-test', name: 'app_post_test')]
-    public function test(Request $request): JsonResponse
-    {
-        return $this->json([
-            'id' => $request->request->get('id'),
-        ]);
-    }
-
     #[Route('/rating/{page}', name: 'app_rating')]
     public function rating(int $page = 1): Response
     {
