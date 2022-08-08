@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Badge;
 use App\Entity\Tourney;
 use App\Entity\User;
 use App\Form\TourneyType;
@@ -84,6 +85,33 @@ class AdminController extends AbstractController
         }
         return $this->json([
             'error' => 'User not found',
+        ]);
+    }
+
+    #[Route('/user/{id}/add-badge', name: 'app_admin_user_badge_add', methods: [ "POST" ])]
+    public function addBadge(User $user, Request $request): JsonResponse
+    {
+        $badgeId = $request->request->get('id');
+        $badge = $this->em->getRepository(Badge::class)->find($badgeId);
+        if($badge) {
+            if ($user->getBadges()->contains($badge)) {
+                return $this->json([
+                    'error' => 'User already has this badge',
+                ]);
+            }
+            $user->addBadge($badge);
+            $this->em->flush();
+            return $this->json([
+                'badge' => [
+                    'id' => $badge->getId(),
+                    'name' => $badge->getName(),
+                    'hexCode' => $badge->getHexCode(),
+                    'text' => $badge->getText(),
+                ],
+            ]);
+        }
+        return $this->json([
+           'error' => 'Badge was not found',
         ]);
     }
 }

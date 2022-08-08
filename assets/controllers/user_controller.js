@@ -6,7 +6,10 @@ export default class extends Controller {
     static values = {
         switchUrl: String,
         verifyUrl: String,
+        addBadgeUrl: String,
     };
+
+    static targets = [ 'badgeId' ];
 
     // для добавления тултипов новых бейджей
     tooltipList;
@@ -63,6 +66,28 @@ export default class extends Controller {
     }
 
     addBadge(event) {
+        let params = new URLSearchParams();
+        params.append('id', this.badgeIdTarget.value);
+        let tooltipList = this.tooltipList;
 
+
+        axios.post(this.addBadgeUrlValue, params)
+            .then(function (response) {
+                if (response.data.badge) {
+                    let badgeData = response.data.badge;
+
+                    let badges = document.getElementById('badge-container');
+                    let badge = document.createElement('span');
+                    badge.classList.add('badge', 'rounded-pill', 'ms-2');
+                    badge.style.backgroundColor = badgeData['hexCode'];
+                    badge.setAttribute('data-bs-toggle', 'tooltip');
+                    badge.setAttribute('data-bs-placement', 'bottom');
+                    badge.setAttribute('data-bs-title', badgeData['text']);
+                    badge.innerHTML = badgeData['name'];
+
+                    badges.append(badge);
+                    tooltipList.push(new Tooltip(badge));
+                }
+            });
     }
 }

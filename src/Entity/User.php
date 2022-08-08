@@ -44,6 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $isVerified = false;
 
     #[ORM\ManyToMany(targetEntity: Badge::class, mappedBy: 'users')]
+    #[ORM\OrderBy(['priority' => 'DESC'])]
     private Collection $badges;
 
     #[ORM\Column(options: ['default' => false])]

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\ChallongeService;
 use Doctrine\ORM\EntityManagerInterface;
 use http\Client;
 use PhpParser\Node\Expr\Cast\Double;
@@ -34,10 +35,8 @@ class MainController extends AbstractController
     }
 
     #[Route('/', name: 'app_main')]
-    public function index(): Response
+    public function index(ChallongeService $challonge): Response
     {
-        $http = new \GuzzleHttp\Client();
-        $challonge = new Challonge($http, 'CksgsGocPPx5fCAo0sbSsh3aMHnJye1lcNYgzGeN', true);
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
         ]);
