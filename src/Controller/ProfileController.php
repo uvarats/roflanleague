@@ -29,7 +29,7 @@ class ProfileController extends AbstractController
     }
 
 
-    #[Route('/profile/{id}', name: 'app_concrete_profile')]
+    #[Route('/u/{id}', name: 'app_concrete_profile')]
     #[Entity('user', expr: 'repository.getFullUser(id)')]
     public function concreteProfile(User $user): Response
     {

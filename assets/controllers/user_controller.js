@@ -7,6 +7,7 @@ export default class extends Controller {
         switchUrl: String,
         verifyUrl: String,
         addBadgeUrl: String,
+        removeBadgeUrl: String,
     };
 
     static targets = [ 'badgeId' ];
@@ -77,16 +78,36 @@ export default class extends Controller {
                     let badgeData = response.data.badge;
 
                     let badges = document.getElementById('badge-container');
-                    let badge = document.createElement('span');
-                    badge.classList.add('badge', 'rounded-pill', 'ms-2');
-                    badge.style.backgroundColor = badgeData['hexCode'];
-                    badge.setAttribute('data-bs-toggle', 'tooltip');
-                    badge.setAttribute('data-bs-placement', 'bottom');
-                    badge.setAttribute('data-bs-title', badgeData['text']);
-                    badge.innerHTML = badgeData['name'];
+                    let badgeItem = document.createElement('div');
+                    badgeItem.classList.add('badge-item', 'd-flex', 'align-items-center');
+                    badgeItem.id = badgeData['id'];
 
-                    badges.append(badge);
-                    tooltipList.push(new Tooltip(badge));
+                    badgeItem.innerHTML =
+                        `<span class="badge rounded-pill ms-2"
+                                  style="background-color: ${badgeData['hexCode']}"
+                                  data-bs-toggle="tooltip"
+                                  data-bs-placement="bottom"
+                                  data-bs-title="${badgeData['text']}"
+                            >
+                                ${badgeData['name']}
+                            </span>
+                        <button type="button" data-action="user#removeBadge" class="btn-close" aria-label="Remove"></button>`;
+                    badges.append(badgeItem);
+                    tooltipList.push(new Tooltip(badgeItem.querySelector('.badge')));
+                }
+            });
+    }
+
+    removeBadge(event) {
+        let badgeItem = event.target.closest('.badge-item')
+
+        let params = new URLSearchParams();
+        params.append('id', badgeItem.id);
+
+        axios.post(this.removeBadgeUrlValue, params)
+            .then(function (response) {
+                if (response.data.success) {
+                    badgeItem.remove();
                 }
             });
     }

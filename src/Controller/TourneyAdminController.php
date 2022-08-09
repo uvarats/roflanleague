@@ -163,4 +163,12 @@ class TourneyAdminController extends AbstractController
             'error' => 'Page is not provided :/',
         ]);
     }
+
+    #[Route('/tourney/{id}/seasons', name: 'app_tourney_seasons')]
+    public function tourneySeasons(Tourney $tourney): Response
+    {
+        return $this->render('admin/tourney/tourney_seasons.html.twig', [
+            'tourney' => $tourney,
+        ]);
+    }
 }

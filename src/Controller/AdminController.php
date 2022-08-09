@@ -114,4 +114,21 @@ class AdminController extends AbstractController
            'error' => 'Badge was not found',
         ]);
     }
+
+    #[Route('/user/{id}/remove-badge', name: 'app_admin_user_badge_remove')]
+    public function removeBadge(User $user, Request $request): JsonResponse
+    {
+        $badgeId = $request->request->get('id');
+        $badge = $this->em->getRepository(Badge::class)->find($badgeId);
+        if ($badge) {
+            $user->removeBadge($badge);
+            $this->em->flush();
+            return $this->json([
+                'success' => true,
+            ]);
+        }
+        return $this->json([
+            'error' => 'Badge was not found',
+        ]);
+    }
 }

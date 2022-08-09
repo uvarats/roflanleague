@@ -9,6 +9,7 @@
         'switchUrl': path('app_admin_user_switch', { id: user.id }),
         'verifyUrl': path('app_admin_user_verify', { id: user.id }),
         'addBadgeUrl': path('app_admin_user_badge_add', { id: user.id }),
+        'removeBadgeUrl': path('app_admin_user_badge_remove', { id: user.id })
     }) }}>
         <div class="d-flex justify-content-center text-center mb-3">
             <p class="h2">Управление пользователем</p>
@@ -41,14 +42,17 @@
                     Бейджи:
                     <div id="badge-container">
                     {% for badge in user.badges %}
-                        <span class="badge rounded-pill ms-2"
-                              style="background-color: {{ badge.hexCode }}"
-                              data-bs-toggle="tooltip"
-                              data-bs-placement="bottom"
-                              data-bs-title="{{ badge.text }}"
-                        >
-                                    {{ badge.name }}
-                                </span>
+                        <div class="badge-item d-flex align-items-center" id="{{ badge.id }}">
+                            <span class="badge rounded-pill ms-2"
+                                  style="background-color: {{ badge.hexCode }}"
+                                  data-bs-toggle="tooltip"
+                                  data-bs-placement="bottom"
+                                  data-bs-title="{{ badge.text }}"
+                            >
+                                {{ badge.name }}
+                            </span>
+                            <button type="button" data-action="user#removeBadge" class="btn-close" aria-label="Remove"></button>
+                        </div>
                     {% endfor %}
                     </div>
                 </div>
