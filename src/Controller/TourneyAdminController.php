@@ -40,7 +40,7 @@ class TourneyAdminController extends AbstractController
         return $this->processTourney($tourney, $request, "Добавление турнира");
     }
 
-    #[Route('/tourney/edit/{id}', name: 'app_tourney_edit')]
+    #[Route('/tourney/{id}/edit', name: 'app_tourney_edit')]
     public function changeTourney(Tourney $tourney, Request $request): Response
     {
         return $this->processTourney($tourney, $request,  "Изменение турнира", false);
@@ -161,14 +161,6 @@ class TourneyAdminController extends AbstractController
         }
         return new JsonResponse([
             'error' => 'Page is not provided :/',
-        ]);
-    }
-
-    #[Route('/tourney/{id}/seasons', name: 'app_tourney_seasons')]
-    public function tourneySeasons(Tourney $tourney): Response
-    {
-        return $this->render('admin/tourney/tourney_seasons.html.twig', [
-            'tourney' => $tourney,
         ]);
     }
 }

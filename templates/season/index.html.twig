@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сезоны турниров!{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <span class="h2">
+                Текущие турниры
+            </span>
+        </div>
+        {% if tourneys|length == 0 %}
+            <span>Извините, в текущий момент нет активных турниров</span>
+        {% else %}
+            {% for tourney in tourneys %}
+                {{ tourney.name }}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {{ include('footer.html.twig') }}
+{% endblock %}
