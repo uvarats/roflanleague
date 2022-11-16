@@ -34,9 +34,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToMany(mappedBy: 'relatedUser', targetEntity: SeasonHistory::class, orphanRemoval: true)]
-    private Collection $seasonHistories;
-
     #[ORM\Column(length: 100, unique: true)]
     private ?string $email = null;
 
@@ -61,7 +58,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->seasonHistories = new ArrayCollection();
         $this->badges = new ArrayCollection();
         $this->tourneys = new ArrayCollection();
     }

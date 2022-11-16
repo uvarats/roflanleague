@@ -49,16 +49,6 @@ class TourneyRepository extends ServiceEntityRepository
         return $query->getSingleResult();
     }
 
-    /**
-     * @return Tourney[]
-     */
-    public function getWithActiveSeason(): array
-    {
-        return $this->createQueryBuilder('tourney')
-            ->where('tourney.currentSeason IS NOT NULL')
-            ->getQuery()
-            ->getResult();
-    }
 //    /**
 //     * @return Tourney[] Returns an array of Tourney objects
 //     */

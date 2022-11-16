@@ -7,6 +7,7 @@
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-sodium": "*",
         "amphp/http-client": "^4.6",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.7",
@@ -45,13 +46,13 @@
         "symfony/validator": "6.1.*",
         "symfony/web-link": "6.1.*",
         "symfony/webpack-encore-bundle": "^1.15",
+        "symfony/workflow": "6.1.*",
         "symfony/yaml": "6.1.*",
         "symfonycasts/reset-password-bundle": "^1.14",
         "symfonycasts/verify-email-bundle": "^1.11",
         "team-reflex/challonge-php": "*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0",
-        "ext-sodium": "*"
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {

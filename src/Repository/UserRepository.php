@@ -133,8 +133,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->addSelect('badges')
             ->leftJoin('user.tourneys', 'tourneys')
             ->addSelect('tourneys')
-            ->leftJoin('user.seasonHistories', 'seasonHistories')
-            ->addSelect('seasonHistories')
             ->where('user.id = :id')
             ->setParameter('id', $id)
             ->getQuery()

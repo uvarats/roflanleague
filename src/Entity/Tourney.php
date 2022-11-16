@@ -18,22 +18,22 @@ class Tourney
     #[ORM\Column(length: 30, unique: true)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'tourney', targetEntity: Season::class)]
-    private Collection $seasons;
+    #[ORM\Column]
+    private ?float $impactCoefficient = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $challongeId = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tourneys')]
     private Collection $participants;
 
-    #[ORM\Column]
-    private ?float $impactCoefficient = null;
+    #[ORM\Column(length: 75, options: ['default' => 'new'])]
+    private ?string $state = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    private ?Season $currentSeason = null;
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
-        $this->seasons = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -53,35 +53,6 @@ class Tourney
         return $this;
     }
 
-    /**
-     * @return Collection<int, Season>
-     */
-    public function getSeasons(): Collection
-    {
-        return $this->seasons;
-    }
-
-    public function addSeason(Season $season): self
-    {
-        if (!$this->seasons->contains($season)) {
-            $this->seasons[] = $season;
-            $season->setTourney($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSeason(Season $season): self
-    {
-        if ($this->seasons->removeElement($season)) {
-            // set the owning side to null (unless already changed)
-            if ($season->getTourney() === $this) {
-                $season->setTourney(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection<int, User>
@@ -119,15 +90,28 @@ class Tourney
         return $this;
     }
 
-    public function getCurrentSeason(): ?Season
+    public function getChallongeId(): ?string
     {
-        return $this->currentSeason;
+        return $this->challongeId;
     }
 
-    public function setCurrentSeason(?Season $currentSeason): self
+    public function setChallongeId(string $challongeId): self
     {
-        $this->currentSeason = $currentSeason;
+        $this->challongeId = $challongeId;
 
         return $this;
     }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): self
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
 }

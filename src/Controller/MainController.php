@@ -5,30 +5,14 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Service\ChallongeService;
 use Doctrine\ORM\EntityManagerInterface;
-use http\Client;
-use PhpParser\Node\Expr\Cast\Double;
-use Psr\Http\Client\ClientInterface;
-use Reflex\Challonge\Challonge;
-use Reflex\Challonge\DTO\MatchDto;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpClient\HttpClient;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class MainController extends AbstractController
 {
 
     public function __construct(
-        private MailerInterface $mailer,
-        private TokenStorageInterface $tokenStorage,
         private EntityManagerInterface $em
     )
     {

@@ -1,0 +1,26 @@
+framework:
+    workflows:
+        tourney_workflow:
+            type: 'workflow'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'state'
+            supports:
+                - App\Entity\Tourney
+            initial_marking: new
+            places:
+                - new
+                - started
+                - ended
+            transitions:
+                start:
+                    from: new
+                    to: started
+                end:
+                    from: started
+                    to: ended
+                renew:
+                    from: ended
+                    to: new

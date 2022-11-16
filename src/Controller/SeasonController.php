@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Tourney;
+use App\Entity\TourneyState;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,8 +21,9 @@ class SeasonController extends AbstractController
     #[Route('/season', name: 'app_season')]
     public function index(): Response
     {
+        dd(TourneyState::STARTED->value);
         $tourneyRepository = $this->em->getRepository(Tourney::class);
-        $tourneys = $tourneyRepository->getWithActiveSeason();
+        $tourneys = $tourneyRepository->findOneBy(['state' => 'started']);
         return $this->render('season/index.html.twig', [
             'tourneys' => $tourneys,
         ]);

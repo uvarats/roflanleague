@@ -5,12 +5,6 @@ namespace App\Service;
 use GuzzleHttp\Client;
 use Reflex\Challonge\Challonge;
 use Reflex\Challonge\DTO\Tournament;
-use Reflex\Challonge\Exceptions\InvalidFormatException;
-use Reflex\Challonge\Exceptions\NotFoundException;
-use Reflex\Challonge\Exceptions\ServerException;
-use Reflex\Challonge\Exceptions\UnauthorizedException;
-use Reflex\Challonge\Exceptions\UnexpectedErrorException;
-use Reflex\Challonge\Exceptions\ValidationException;
 
 class ChallongeService
 {
