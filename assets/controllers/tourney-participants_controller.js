@@ -66,7 +66,7 @@ export default class extends Controller {
                     div.innerHTML =
                         `<div class="row d-flex align-items-center justify-content-between row-cols-md-2 row-cols-1">
                             <div class="d-flex flex-row col">
-                                <img class="rounded-circle" width="64" height="64" src="https://cravatar.eu/avatar/${element['name']}/128">
+                                <img class="rounded-circle" width="64" height="64" src="https://avatars.dicebear.com/api/personas/${element['name']}.svg">
                                 <span class="h2 ms-3">${element['name']}</span>
                             </div>
                             <div class="col d-flex flex-row justify-content-end">

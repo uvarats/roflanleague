@@ -16,7 +16,7 @@
         </div>
         <div class="row mb-3">
             <div class="col-auto">
-                <img class="rounded-circle" width="128" height="128" src="https://mc-heads.net/avatar/{{ user.username }}">
+                {{ include('_avatar.html.twig', { 'name': user.username, 'width': 128, 'height': 128 }) }}
             </div>
             <div class="col d-flex flex-column">
                 <a href="{{ path('app_concrete_profile', {id: user.id}) }}" class="text-dark text-decoration-none">

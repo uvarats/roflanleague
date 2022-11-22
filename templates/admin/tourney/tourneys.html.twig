@@ -29,7 +29,11 @@
                                 Действия
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ path('app_tourney_seasons', { id: tourney.id }) }}">Сезоны</a></li>
+                                {% if tourney.state == 'new' %}
+                                    <li><a class="dropdown-item" href="#">Запустить</a></li>
+                                {% elseif tourney.state == 'started' %}
+                                    <li><a class="dropdown-item" href="#">Завершить</a></li>
+                                {% endif %}
                                 <li><a class="dropdown-item" href="{{ path('app_tourney_participants', { id: tourney.id }) }}">Участники</a></li>
                                 <li><a class="dropdown-item" href="{{ path('app_tourney_edit', {id: tourney.id}) }}">Редактировать</a></li>
                                 <li><hr class="dropdown-divider"></li>

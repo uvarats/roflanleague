@@ -28,7 +28,7 @@ class Tourney
     private Collection $participants;
 
     #[ORM\Column(length: 75, options: ['default' => 'new'])]
-    private ?string $state = null;
+    private ?string $state = 'new';
 
 
     public function __construct()
