@@ -1,19 +1,56 @@
 import { Controller } from "@hotwired/stimulus";
-import { Modal } from "bootstrap";
+import { Modal, Alert } from "bootstrap";
 import axios from "axios";
 
 export default class extends Controller {
-    static targets = [ "modal", "confirmButton" ];
+    static targets = [ "modal", "confirmButton", "alertContainer" ];
 
     static values = {
+        startUrl: String,
+        randomizeUrl: String,
+        endUrl: String,
         removeUrl: String,
     };
+
+    static successAlert = "";
+    static errorAlert = ""
 
     confirmModal;
     relatedTarget;
 
     connect() {
         this.confirmModal = new Modal(this.modalTarget);
+    }
+
+    getParamsWithId(object) {
+        let tourneyObject = object.closest('.tourney-object');
+        let params = new URLSearchParams();
+        params.append('id', tourneyObject.id);
+        return params;
+    }
+
+    start(event) {
+        let params = this.getParamsWithId(event.target);
+        axios.post(this.startUrlValue, params)
+            .then(function (response) {
+                console.log(response);
+            }, function (error) {
+                console.log(error);
+            });
+    }
+
+    randomize(event) {
+        let params = this.getParamsWithId(event.target);
+        axios.post(this.randomizeUrlValue, params)
+            .then(function (response) {
+                console.log(response.data);
+            }, function (error) {
+                console.log(error.data);
+            });
+    }
+
+    end(event) {
+
     }
 
     remove(event) {
@@ -35,14 +72,13 @@ export default class extends Controller {
              </div>`;
         confirmButton.disabled = true;
 
-        let tourneyId = this.relatedTarget.id;
+        let tourneyId = tourneyObject.id;
 
         let modal = this.confirmModal;
 
         let data = new URLSearchParams();
         data.append('id', tourneyId);
 
-        console.log(tourneyId);
         axios.post(this.removeUrlValue, data)
             .then(
                 function (response) {

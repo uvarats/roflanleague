@@ -1,50 +1,51 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Рофлолига - Главная{% endblock %}
+{% block title %}League - Главная{% endblock %}
 
 {% block body %}
 
- {{ include('header.html.twig') }}
+    {{ include('header.html.twig') }}
 
- <div class="container">
-  <div class="container py-4">
+    <div class="container">
+        <div class="container py-4">
 
 
+            <div class="p-5 mb-4 bg-light rounded-3">
+                <div class="container-fluid py-5">
+                    <h1 class="display-5 fw-bold">League</h1>
+                    <p class="col-md-8 fs-4">Платформа для управления турнирами и их результатами.</p>
+                    {% if app.user %}
+                        <button class="btn btn-primary btn-lg" type="button">Профиль</button>
+                    {% else %}
+                        <button class="btn btn-primary btn-lg" type="button">Регистрация</button>
+                    {% endif %}
+                </div>
+            </div>
 
-   <div class="p-5 mb-4 bg-light rounded-3">
-    <div class="container-fluid py-5">
-     <h1 class="display-5 fw-bold">Рофлолига</h1>
-     <p class="col-md-8 fs-4">Платформа для управления турнирами и их результатами.</p>
-     {% if app.user %}
-      <button class="btn btn-primary btn-lg" type="button">Профиль</button>
-     {% else %}
-      <button class="btn btn-primary btn-lg" type="button">Регистрация</button>
-     {% endif %}
+            <div class="row align-items-md-stretch">
+                <div class="col-md-6">
+                    <div class="h-100 p-5 text-white bg-dark rounded-3">
+                        <h2>Турниры</h2>
+                        <p>Каждый участник может участвовать в неограниченном количестве турниров. Платформа
+                            интегрирована с Challonge API.</p>
+                        <button class="btn btn-outline-light" type="button">¯\_(ツ)_/¯</button>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="h-100 p-5 bg-light border rounded-3">
+                        <h2>Топ участников</h2>
+                        <p>У каждого участника есть определенный рейтинг, основанный на успехах в предыдущих сезонах.
+                            Чем выше рейтинг, тем выше позиция в топе.</p>
+                        <button class="btn btn-outline-secondary" type="button">Рейтинг</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+            </div>
+
+        </div>
     </div>
-   </div>
 
-   <div class="row align-items-md-stretch">
-    <div class="col-md-6">
-     <div class="h-100 p-5 text-white bg-dark rounded-3">
-      <h2>Турниры</h2>
-      <p>Каждый участник может участвовать в неограниченном количестве турниров. Платформа интегрирована с Challonge API.</p>
-      <button class="btn btn-outline-light" type="button">¯\_(ツ)_/¯</button>
-     </div>
-    </div>
-    <div class="col-md-6">
-     <div class="h-100 p-5 bg-light border rounded-3">
-      <h2>Топ участников</h2>
-      <p>У каждого участника есть определенный рейтинг, основанный на успехах в предыдущих сезонах. Чем выше рейтинг, тем выше позиция в топе.</p>
-      <button class="btn btn-outline-secondary" type="button">Рейтинг</button>
-     </div>
-    </div>
-   </div>
-   <div>
-   </div>
-
-  </div>
- </div>
-
- {{ include('footer.html.twig') }}
+    {{ include('footer.html.twig') }}
 
 {% endblock %}

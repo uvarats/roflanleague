@@ -3,11 +3,20 @@
 namespace App\Service;
 
 use App\Entity\TournamentType;
+use App\Entity\Tourney;
 use App\Entity\User;
 use GuzzleHttp\Client;
 use Reflex\Challonge\Challonge;
 use Reflex\Challonge\DTO\Participant;
 use Reflex\Challonge\DTO\Tournament;
+use Reflex\Challonge\Exceptions\AlreadyStartedException;
+use Reflex\Challonge\Exceptions\InvalidFormatException;
+use Reflex\Challonge\Exceptions\NotFoundException;
+use Reflex\Challonge\Exceptions\ServerException;
+use Reflex\Challonge\Exceptions\StillRunningException;
+use Reflex\Challonge\Exceptions\UnauthorizedException;
+use Reflex\Challonge\Exceptions\UnexpectedErrorException;
+use Reflex\Challonge\Exceptions\ValidationException;
 
 class ChallongeService
 {
@@ -24,6 +33,15 @@ class ChallongeService
         return $this->challonge;
     }
 
+    /**
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws ServerException
+     * @throws ValidationException
+     * @throws InvalidFormatException
+     * @throws \JsonException
+     * @throws UnauthorizedException
+     */
     public function createTournament(string $name, TournamentType $type): Tournament
     {
         return $this->challonge->createTournament([
@@ -32,18 +50,37 @@ class ChallongeService
         ]);
     }
 
-    public function addParticipant(string|int $tourney, User $user): Participant
+    /**
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws ServerException
+     * @throws InvalidFormatException
+     * @throws ValidationException
+     * @throws \JsonException
+     * @throws UnauthorizedException
+     */
+    public function addParticipant(Tourney $tourney, User $user): Participant
     {
-        return $this->fetchTournament($tourney)->addParticipant([
-            'name' => $user->getUsername(),
-            'misc' => $user->getId(),
-        ]);
+        return $this->fetchTournament($tourney)
+            ->addParticipant([
+                'name' => $user->getUsername(),
+                'misc' => $user->getId(),
+            ]);
     }
 
-    public function removeParticipant(string|int $tourney, User $user): bool
+    /**
+     * @throws ValidationException
+     * @throws UnauthorizedException
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws ServerException
+     * @throws InvalidFormatException
+     * @throws \JsonException
+     */
+    public function removeParticipant(Tourney $tourney, User $user): bool
     {
         $tournament = $this->fetchTournament($tourney);
-        $iterator = $this->challonge->getParticipants($tourney)->getIterator();
+        $iterator = $this->challonge->getParticipants($tourney->getChallongeId())->getIterator();
         /** @var Participant $item */
         foreach ($iterator as $item) {
             if ($item->name === $user->getUsername()) {
@@ -54,14 +91,81 @@ class ChallongeService
         return false;
     }
 
-    public function removeTournament(string|int $idOrUrl)
+    /**
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws ServerException
+     * @throws ValidationException
+     * @throws InvalidFormatException
+     * @throws \JsonException
+     * @throws UnauthorizedException
+     * @throws AlreadyStartedException
+     */
+    public function startTournament(Tourney $tourney): Tournament
     {
-        $this->challonge->deleteTournament($idOrUrl);
+        return $this->getChallonge()
+            ->fetchTournament($tourney->getChallongeId())
+            ->start();
     }
 
-    public function fetchTournament(string|int $tournament): Tournament
+    /**
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws StillRunningException
+     * @throws ServerException
+     * @throws InvalidFormatException
+     * @throws ValidationException
+     * @throws \JsonException
+     * @throws UnauthorizedException
+     */
+    public function endTournament(Tourney $tourney): Tournament
     {
-        return $this->challonge->fetchTournament($tournament);
+        return $this->getChallonge()
+            ->fetchTournament($tourney->getChallongeId())
+            ->finalize();
+    }
+
+    /**
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws ServerException
+     * @throws InvalidFormatException
+     * @throws ValidationException
+     * @throws \JsonException
+     * @throws UnauthorizedException
+     */
+    public function randomizeParticipants(Tourney $tourney): void
+    {
+        $this->getChallonge()
+            ->randomizeParticipants($tourney->getChallongeId());
+    }
+
+    /**
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws ServerException
+     * @throws InvalidFormatException
+     * @throws ValidationException
+     * @throws \JsonException
+     * @throws UnauthorizedException
+     */
+    public function removeTournament(string $tourney): void
+    {
+        $this->challonge->deleteTournament($tourney);
+    }
+
+    /**
+     * @throws UnexpectedErrorException
+     * @throws NotFoundException
+     * @throws ServerException
+     * @throws ValidationException
+     * @throws InvalidFormatException
+     * @throws \JsonException
+     * @throws UnauthorizedException
+     */
+    public function fetchTournament(Tourney $tourney): Tournament
+    {
+        return $this->challonge->fetchTournament($tourney->getChallongeId());
     }
 
 }

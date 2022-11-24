@@ -7,6 +7,9 @@
     {{ include('header.html.twig') }}
 
     <div class="container" {{ stimulus_controller('tourney', {
+        'startUrl': path('app_tourney_start'),
+        'randomizeUrl': path('app_tourney_randomize'),
+        'endUrl': path('app_tourney_end'),
         'removeUrl': path('app_tourney_remove'),
     }) }}>
         <div class="d-flex flex-column justify-content-center text-center">
@@ -14,10 +17,11 @@
             <form action="{{ path('app_tourney_add') }}">
                 <button type="submit" class="w-100 btn btn-outline-primary" value="5">Добавить турнир</button>
             </form>
+            <div class="alert-container" {{ stimulus_target('tourney', 'alertContainer') }}></div>
         </div>
         <hr>
         {% for tourney in tourneys %}
-            <div class="tourney-object">
+            <div class="tourney-object" id="{{ tourney.id }}">
                 <div class="row d-flex justify-content-between row-cols-md-2 row-cols-1">
                     <div class="col text-start d-flex flex-column">
                         <span class="h3">{{ tourney.name }}</span>
@@ -25,20 +29,32 @@
                     </div>
                     <div class="col d-flex flex-row justify-content-end align-items-center">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                 Действия
                             </button>
                             <ul class="dropdown-menu">
                                 {% if tourney.state == 'new' %}
-                                    <li><a class="dropdown-item" href="#">Запустить</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="#" {{ stimulus_action('tourney', 'start', 'click') }}>Запустить</a>
+                                    </li>
+                                    <li><a class="dropdown-item"
+                                           href="#" {{ stimulus_action('tourney', 'randomize', 'click') }}>Перемешать
+                                            участников</a></li>
                                 {% elseif tourney.state == 'started' %}
-                                    <li><a class="dropdown-item" href="#">Завершить</a></li>
+                                    <li><a class="dropdown-item"
+                                           href="#" {{ stimulus_action('tourney', 'end', 'click') }}>Завершить</a></li>
                                 {% endif %}
-                                <li><a class="dropdown-item" href="{{ path('app_tourney_participants', { id: tourney.id }) }}">Участники</a></li>
-                                <li><a class="dropdown-item" href="{{ path('app_tourney_edit', {id: tourney.id}) }}">Редактировать</a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item"
+                                       href="{{ path('app_tourney_participants', { id: tourney.id }) }}">Участники</a>
+                                </li>
+                                <li><a class="dropdown-item" href="{{ path('app_tourney_edit', {id: tourney.id}) }}">Редактировать</a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li {{ stimulus_action('tourney', 'remove', 'click') }}>
-                                    <a id="{{ tourney.id }}" class="dropdown-item">Удалить</a>
+                                    <a class="dropdown-item">Удалить</a>
                                 </li>
                             </ul>
                         </div>
@@ -48,7 +64,8 @@
             </div>
         {% endfor %}
 
-        <div class="modal fade" id="confirmationModal" tabindex="-1" {{ stimulus_target('tourney', 'modal')}} aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal fade" id="confirmationModal" tabindex="-1" {{ stimulus_target('tourney', 'modal') }}
+             aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -60,11 +77,14 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                        <button type="button" {{ stimulus_target('tourney', 'confirmButton') }} class="btn btn-danger" {{ stimulus_action('tourney', 'confirm') }}>Удалить</button>
+                        <button type="button" {{ stimulus_target('tourney', 'confirmButton') }}
+                                class="btn btn-danger" {{ stimulus_action('tourney', 'confirm') }}>Удалить
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 
     {{ include('footer.html.twig') }}
