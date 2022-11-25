@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\ParticipantAction;
@@ -10,7 +12,6 @@ use App\Entity\User;
 use App\Form\TourneyType;
 use App\Service\ChallongeService;
 use Doctrine\ORM\EntityManagerInterface;
-use Reflex\Challonge\Exceptions\AlreadyStartedException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -49,13 +50,13 @@ class TourneyAdminController extends AbstractController
             $challongeTourney = $this->challonge
                 ->createTournament($tourney->getName(), TournamentType::DOUBLE_ELIMINATION);
 
-            $tourney->setChallongeId($challongeTourney->id);
+            $tourney->setChallongeUrl($challongeTourney->url);
 
             $this->em->persist($tourney);
             try {
                 $this->em->flush();
             } catch (\Throwable $exception) {
-                $this->challonge->removeTournament($challongeTourney->id);
+                $this->challonge->removeTournament($challongeTourney->url);
             }
 
             return $this->redirectToRoute('app_tourneys');
@@ -92,7 +93,7 @@ class TourneyAdminController extends AbstractController
         $tourney = $this->em->getRepository(Tourney::class)->find($id);
         if ($tourney) {
             $this->challonge
-                ->removeTournament($tourney->getChallongeId());
+                ->removeTournament($tourney->getChallongeUrl());
             $this->em->remove($tourney);
             $this->em->flush();
             return new JsonResponse([
@@ -108,8 +109,12 @@ class TourneyAdminController extends AbstractController
     public function startTourney(Request $request): JsonResponse
     {
         $tourney = $this->getTourneyFromPost($request);
+
         $this->challonge->startTournament($tourney);
-        return $this->json(['success' => 'Tournament successfully started!']);
+        $tourney->setState(TourneyState::STARTED->value);
+        $this->em->flush();
+
+        return $this->json(['success' => 'Турнир успешно запущен!']);
     }
 
     #[Route('/tourney/randomize', name: 'app_tourney_randomize', methods: ['POST'])]
@@ -117,11 +122,13 @@ class TourneyAdminController extends AbstractController
     {
         $tourney = $this->getTourneyFromPost($request);
         if ($tourney->getState() !== TourneyState::NEW->value) {
-            return $this->json(['error' => 'Tourney has been started!']);
+            throw new \InvalidArgumentException(
+                'Только у нового турнира можно перемешивать участников!'
+            );
         }
         $this->challonge->randomizeParticipants($tourney);
         return $this->json([
-            'success' => true,
+            'success' => "Участники успешно перемешаны!",
         ]);
     }
 
@@ -130,11 +137,11 @@ class TourneyAdminController extends AbstractController
     {
         $tourney = $this->getTourneyFromPost($request);
         if ($tourney->getState() !== TourneyState::STARTED->value) {
-            return $this->json(['error' => 'This tourney is not started!']);
+            return $this->json(['error' => 'Турнир не запущен']);
         }
         $this->challonge->endTournament($tourney);
 
-        return $this->json(['success' => true]);
+        return $this->json(['success' => "Турнир завершен!"]);
     }
 
     #[Route('/tourney/{id}/participants', name: 'app_tourney_participants')]
@@ -223,7 +230,8 @@ class TourneyAdminController extends AbstractController
         ]);
     }
 
-    public function getTourneyFromPost(Request $request) {
+    public function getTourneyFromPost(Request $request)
+    {
         $id = $request->request->get('id');
         return $this->em->getRepository(Tourney::class)
             ->findOneBy(['id' => $id]);

@@ -22,7 +22,7 @@ class Tourney
     private ?float $impactCoefficient = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $challongeId = null;
+    private ?string $challongeUrl = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'tourneys')]
     private Collection $participants;
@@ -90,14 +90,14 @@ class Tourney
         return $this;
     }
 
-    public function getChallongeId(): ?string
+    public function getChallongeUrl(): ?string
     {
-        return $this->challongeId;
+        return $this->challongeUrl;
     }
 
-    public function setChallongeId(string $challongeId): self
+    public function setChallongeUrl(string $challongeId): self
     {
-        $this->challongeId = $challongeId;
+        $this->challongeUrl = $challongeId;
 
         return $this;
     }

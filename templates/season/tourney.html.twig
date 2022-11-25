@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Турнир {{ tourney.name }}{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="accordion-header mb-3">
+            <span class="h3">{{ tourney.name }}</span>
+            <a class="link-dark text-decoration-none" href="https://challonge.com/{{ tourney.challongeUrl }}">{{ tourney.challongeUrl }}</a>
+        </div>
+        <div class="standings">
+            <span class="h4 mb-2">Сетка</span>
+            <iframe src="https://challonge.com/{{ tourney.challongeUrl }}/module?theme=2&show_final_results=1&show_standings=1"
+                    width="100%" height="800" scrolling="auto" allowtransparency="true">
+            </iframe>
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

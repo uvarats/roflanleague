@@ -1,9 +1,9 @@
-import { Controller } from "@hotwired/stimulus";
-import { Modal, Alert } from "bootstrap";
+import {Controller} from "@hotwired/stimulus";
+import {Modal} from "bootstrap";
 import axios from "axios";
 
 export default class extends Controller {
-    static targets = [ "modal", "confirmButton", "alertContainer" ];
+    static targets = ["modal", "confirmButton", "alertContainer"];
 
     static values = {
         startUrl: String,
@@ -11,9 +11,6 @@ export default class extends Controller {
         endUrl: String,
         removeUrl: String,
     };
-
-    static successAlert = "";
-    static errorAlert = ""
 
     confirmModal;
     relatedTarget;
@@ -29,34 +26,49 @@ export default class extends Controller {
         return params;
     }
 
-    start(event) {
+    async start(event) {
         let params = this.getParamsWithId(event.target);
-        axios.post(this.startUrlValue, params)
-            .then(function (response) {
-                console.log(response);
-            }, function (error) {
-                console.log(error);
-            });
+        try {
+            let response = await axios.post(this.startUrlValue, params);
+            this.alert('success', response.data.success);
+        } catch (e) {
+            this.alert('danger', e.response.data.detail);
+        }
     }
 
-    randomize(event) {
+    async randomize(event) {
         let params = this.getParamsWithId(event.target);
-        axios.post(this.randomizeUrlValue, params)
-            .then(function (response) {
-                console.log(response.data);
-            }, function (error) {
-                console.log(error.data);
-            });
+        try {
+            let response = await axios.post(this.randomizeUrlValue, params);
+            this.alert('success', response.data.success);
+        } catch (e) {
+            this.alert('danger', e.response.data.detail);
+        }
     }
 
-    end(event) {
-
+    async end(event) {
+        let params = this.getParamsWithId(event.target);
+        try {
+            let response = await axios.post(this.endUrlValue, params);
+            this.alert('success', response.data.success);
+        } catch (e) {
+            this.alert('danger', e.response.data.detail);
+        }
     }
 
     remove(event) {
         this.relatedTarget = event.target;
 
         this.confirmModal.show();
+    }
+
+    alert(key, text) {
+        this.alertContainerTarget.innerHTML = [
+            `<div class="alert alert-${key} alert-dismissible" role="alert">`,
+            `   <div>${text}</div>`,
+            '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+            '</div>'
+        ].join('');
     }
 
     confirm(event) {
@@ -84,11 +96,11 @@ export default class extends Controller {
                 function (response) {
                     confirmButton.innerHTML = oldButtonContent;
                     confirmButton.disabled = false;
-                    if(response.data.success) {
+                    if (response.data.success) {
                         tourneyObject.remove();
                         modal.hide();
                     }
                 }
-        );
+            );
     }
 }

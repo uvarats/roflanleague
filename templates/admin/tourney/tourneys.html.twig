@@ -17,7 +17,7 @@
             <form action="{{ path('app_tourney_add') }}">
                 <button type="submit" class="w-100 btn btn-outline-primary" value="5">Добавить турнир</button>
             </form>
-            <div class="alert-container" {{ stimulus_target('tourney', 'alertContainer') }}></div>
+            <div class="alert-container mt-3" {{ stimulus_target('tourney', 'alertContainer') }}></div>
         </div>
         <hr>
         {% for tourney in tourneys %}
@@ -27,24 +27,28 @@
                         <span class="h3">{{ tourney.name }}</span>
                         <span>Коэффициент важности: {{ tourney.impactCoefficient }}</span>
                     </div>
-                    <div class="col d-flex flex-row justify-content-end align-items-center">
-                        <div class="btn-group">
+                    <div class="col d-flex flex-row justify-content-md-end justify-content-center mt-md-0 mt-3 align-items-center">
+                        <div class="btn-group flex-grow-1 flex-md-grow-0">
+                            {% if tourney.state == 'new' %}
+                                <button type="button"
+                                        class="btn btn-success" {{ stimulus_action('tourney', 'start', 'click') }}>
+                                    Запустить
+                                </button>
+                                <button type="button"
+                                        class="btn btn-warning" {{ stimulus_action('tourney', 'randomize', 'click') }}>
+                                    Перемешать участников
+                                </button>
+                            {% elseif tourney.state == 'started' %}
+                                <button type="button"
+                                        class="btn btn-danger" {{ stimulus_action('tourney', 'end', 'click') }}>
+                                    Завершить
+                                </button>
+                            {% endif %}
                             <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                 Действия
                             </button>
                             <ul class="dropdown-menu">
-                                {% if tourney.state == 'new' %}
-                                    <li><a class="dropdown-item"
-                                           href="#" {{ stimulus_action('tourney', 'start', 'click') }}>Запустить</a>
-                                    </li>
-                                    <li><a class="dropdown-item"
-                                           href="#" {{ stimulus_action('tourney', 'randomize', 'click') }}>Перемешать
-                                            участников</a></li>
-                                {% elseif tourney.state == 'started' %}
-                                    <li><a class="dropdown-item"
-                                           href="#" {{ stimulus_action('tourney', 'end', 'click') }}>Завершить</a></li>
-                                {% endif %}
                                 <li><a class="dropdown-item"
                                        href="{{ path('app_tourney_participants', { id: tourney.id }) }}">Участники</a>
                                 </li>

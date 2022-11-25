@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\TournamentType;
 use App\Entity\Tourney;
+use App\Entity\TourneyState;
 use App\Entity\User;
 use GuzzleHttp\Client;
 use Reflex\Challonge\Challonge;
@@ -80,7 +81,7 @@ class ChallongeService
     public function removeParticipant(Tourney $tourney, User $user): bool
     {
         $tournament = $this->fetchTournament($tourney);
-        $iterator = $this->challonge->getParticipants($tourney->getChallongeId())->getIterator();
+        $iterator = $this->challonge->getParticipants($tourney->getChallongeUrl())->getIterator();
         /** @var Participant $item */
         foreach ($iterator as $item) {
             if ($item->name === $user->getUsername()) {
@@ -104,7 +105,7 @@ class ChallongeService
     public function startTournament(Tourney $tourney): Tournament
     {
         return $this->getChallonge()
-            ->fetchTournament($tourney->getChallongeId())
+            ->fetchTournament($tourney->getChallongeUrl())
             ->start();
     }
 
@@ -121,7 +122,7 @@ class ChallongeService
     public function endTournament(Tourney $tourney): Tournament
     {
         return $this->getChallonge()
-            ->fetchTournament($tourney->getChallongeId())
+            ->fetchTournament($tourney->getChallongeUrl())
             ->finalize();
     }
 
@@ -137,7 +138,7 @@ class ChallongeService
     public function randomizeParticipants(Tourney $tourney): void
     {
         $this->getChallonge()
-            ->randomizeParticipants($tourney->getChallongeId());
+            ->randomizeParticipants($tourney->getChallongeUrl());
     }
 
     /**
@@ -165,7 +166,7 @@ class ChallongeService
      */
     public function fetchTournament(Tourney $tourney): Tournament
     {
-        return $this->challonge->fetchTournament($tourney->getChallongeId());
+        return $this->challonge->fetchTournament($tourney->getChallongeUrl());
     }
 
 }
