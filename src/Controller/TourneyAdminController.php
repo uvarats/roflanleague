@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\ParticipantAction;
-use App\Entity\TournamentType;
+use App\Entity\Enum\ParticipantAction;
+use App\Entity\Enum\TournamentType;
+use App\Entity\Enum\TourneyState;
 use App\Entity\Tourney;
-use App\Entity\TourneyState;
 use App\Entity\User;
 use App\Form\TourneyType;
 use App\Service\ChallongeService;

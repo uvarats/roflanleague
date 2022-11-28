@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
-use App\Entity\TournamentType;
+use App\Entity\Enum\TournamentType;
 use App\Entity\Tourney;
-use App\Entity\TourneyState;
 use App\Entity\User;
 use GuzzleHttp\Client;
+use Illuminate\Support\Collection;
 use Reflex\Challonge\Challonge;
+use Reflex\Challonge\DTO\MatchDto;
 use Reflex\Challonge\DTO\Participant;
 use Reflex\Challonge\DTO\Tournament;
 use Reflex\Challonge\Exceptions\AlreadyStartedException;
@@ -167,6 +170,29 @@ class ChallongeService
     public function fetchTournament(Tourney $tourney): Tournament
     {
         return $this->challonge->fetchTournament($tourney->getChallongeUrl());
+    }
+
+    public function getMatches(Tourney $tourney): Collection
+    {
+        $matches = $this->challonge->getMatches($tourney->getChallongeUrl());
+        return $matches->filter(function (MatchDto $match) {
+            return $match->player1_id != null && $match->player2_id != null;
+        });
+    }
+
+    public function getParticipant(string|int|Tourney $tourney, int $participantId): Participant
+    {
+        if ($tourney instanceof Tourney) {
+            $tourney = $tourney->getChallongeUrl();
+        }
+        return $this->challonge->getParticipant($tourney, $participantId);
+    }
+
+    public function getParticipants(string|int|Tourney $tourney) {
+        if ($tourney instanceof Tourney) {
+            $tourney = $tourney->getChallongeUrl();
+        }
+        return $this->challonge->getParticipants($tourney);
     }
 
 }

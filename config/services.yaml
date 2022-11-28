@@ -22,6 +22,9 @@ services:
     App\Service\ChallongeService:
         arguments:
             - '%env(CHALLONGE_TOKEN)%'
+    App\Service\OddsService:
+        arguments:
+            - '%env(ODDS_MARGIN_PERCENT)%'
 
 
     # add more service definitions when explicit configuration is needed

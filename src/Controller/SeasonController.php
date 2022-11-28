@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Entity\Enum\Result;
+use App\Entity\MatchResult;
 use App\Entity\Tourney;
 use App\Service\ChallongeService;
+use App\Service\OddsService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +18,9 @@ class SeasonController extends AbstractController
 {
 
     public function __construct(
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private ChallongeService $service,
+        private OddsService $odds
     )
     {
     }
@@ -32,9 +37,10 @@ class SeasonController extends AbstractController
     }
 
     #[Route('/season/{id}', name: 'app_season_tourney')]
-    public function tourney(Tourney $tourney, ChallongeService $service): Response
+    public function tourney(Tourney $tourney): Response
     {
-        $matches = $service->getChallonge()->getMatches($tourney->getChallongeUrl());
+        $matches = $this->service->getMatches($tourney);
+        $odds = $this->odds->getMatchesOdds($matches, $tourney);
         return $this->render('season/tourney.html.twig', [
             'tourney' => $tourney,
         ]);

@@ -56,10 +56,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Tourney::class, mappedBy: 'participants')]
     private Collection $tourneys;
 
+    #[ORM\OneToMany(mappedBy: 'player1', targetEntity: MatchResult::class)]
+    private Collection $matchResults;
+
     public function __construct()
     {
         $this->badges = new ArrayCollection();
         $this->tourneys = new ArrayCollection();
+        $this->matchResults = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -271,6 +275,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->tourneys->removeElement($tourney)) {
             $tourney->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MatchResult>
+     */
+    public function getMatchResults(): Collection
+    {
+        return $this->matchResults;
+    }
+
+    public function addMatchResult(MatchResult $matchResult): self
+    {
+        if (!$this->matchResults->contains($matchResult)) {
+            $this->matchResults->add($matchResult);
+            $matchResult->setPlayer1($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMatchResult(MatchResult $matchResult): self
+    {
+        if ($this->matchResults->removeElement($matchResult)) {
+            // set the owning side to null (unless already changed)
+            if ($matchResult->getPlayer1() === $this) {
+                $matchResult->setPlayer1(null);
+            }
         }
 
         return $this;
