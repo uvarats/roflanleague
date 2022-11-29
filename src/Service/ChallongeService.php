@@ -172,11 +172,11 @@ class ChallongeService
         return $this->challonge->fetchTournament($tourney->getChallongeUrl());
     }
 
-    public function getMatches(Tourney $tourney): Collection
+    public function getMatches(Tourney $tourney, string $state = 'open'): Collection
     {
         $matches = $this->challonge->getMatches($tourney->getChallongeUrl());
-        return $matches->filter(function (MatchDto $match) {
-            return $match->player1_id != null && $match->player2_id != null;
+        return $matches->filter(function (MatchDto $match) use ($state) {
+            return ($match->player1_id != null && $match->player2_id != null) && $match->state === $state;
         });
     }
 

@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Controller;
 
 use App\Entity\Enum\Result;
+use App\Entity\MatchOdds;
 use App\Entity\MatchResult;
 use App\Entity\Tourney;
 use App\Service\ChallongeService;
 use App\Service\OddsService;
 use Doctrine\ORM\EntityManagerInterface;
+use Illuminate\Support\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,9 +42,11 @@ class SeasonController extends AbstractController
     public function tourney(Tourney $tourney): Response
     {
         $matches = $this->service->getMatches($tourney);
-        $odds = $this->odds->getMatchesOdds($matches, $tourney);
+        /** @var MatchOdds[] $odds */
+        $odds = $this->odds->getMatchesOdds($matches, $tourney)->all();
         return $this->render('season/tourney.html.twig', [
             'tourney' => $tourney,
+            'odds' => $odds,
         ]);
     }
 }
