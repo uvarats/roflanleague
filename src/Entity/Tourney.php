@@ -30,10 +30,14 @@ class Tourney
     #[ORM\Column(length: 75, options: ['default' => 'new'])]
     private ?string $state = 'new';
 
+    #[ORM\OneToMany(mappedBy: 'tourney', targetEntity: MatchResult::class)]
+    private Collection $matchResults;
+
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
+        $this->matchResults = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,6 +114,36 @@ class Tourney
     public function setState(string $state): self
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, MatchResult>
+     */
+    public function getMatchResults(): Collection
+    {
+        return $this->matchResults;
+    }
+
+    public function addMatchResult(MatchResult $matchResult): self
+    {
+        if (!$this->matchResults->contains($matchResult)) {
+            $this->matchResults->add($matchResult);
+            $matchResult->setTourney($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMatchResult(MatchResult $matchResult): self
+    {
+        if ($this->matchResults->removeElement($matchResult)) {
+            // set the owning side to null (unless already changed)
+            if ($matchResult->getTourney() === $this) {
+                $matchResult->setTourney(null);
+            }
+        }
 
         return $this;
     }

@@ -41,11 +41,12 @@
                             <hr>
                             <div class="d-flex flex-row justify-content-around mb-3">
                                 {% if is_granted('ROLE_ADMIN') %}
-                                    <button class="btn btn-outline-success">{{ odd.odds.firstOdds }}</button>
-                                    <button class="btn btn-outline-success">{{ odd.odds.secondOdds }}</button>
+                                    <button class="btn btn-outline-success">{{ odd.odds.homeOdds }}</button>
+                                    <button class="btn btn-outline-info">Случайно</button>
+                                    <button class="btn btn-outline-danger">{{ odd.odds.awayOdds }}</button>
                                 {% else %}
-                                    <span>{{ odd.odds.firstOdds }}</span>
-                                    <span>{{ odd.odds.secondOdds }}</span>
+                                    <span>{{ odd.odds.homeOdds }}</span>
+                                    <span>{{ odd.odds.awayOdds }}</span>
                                 {% endif %}
                             </div>
                         </div>

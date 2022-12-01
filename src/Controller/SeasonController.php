@@ -8,6 +8,7 @@ use App\Entity\Enum\Result;
 use App\Entity\MatchOdds;
 use App\Entity\MatchResult;
 use App\Entity\Tourney;
+use App\Entity\User;
 use App\Service\ChallongeService;
 use App\Service\OddsService;
 use Doctrine\ORM\EntityManagerInterface;

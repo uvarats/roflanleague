@@ -16,20 +16,20 @@ class MatchResult
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'matchResults')]
-    private ?User $player1 = null;
+    #[ORM\ManyToOne()]
+    private ?User $homePlayer = null;
 
-    #[ORM\ManyToOne(inversedBy: 'matchResults')]
-    private ?User $player2 = null;
+    #[ORM\ManyToOne()]
+    private ?User $awayPlayer = null;
 
     #[ORM\Column(type: 'string', length: 15, enumType: Result::class)]
     private ?Result $result = null;
 
     #[ORM\Column]
-    private ?int $player1RatingChange = null;
+    private ?int $homePlayerRatingChange = null;
 
     #[ORM\Column]
-    private ?int $player2RatingChange = null;
+    private ?int $awayPlayerRatingChange = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $finishedAt = null;
@@ -38,36 +38,40 @@ class MatchResult
     private ?int $challongeMatchId = null;
 
     #[ORM\Column]
-    private ?float $player1Odds = null;
+    private ?float $homePlayerOdds = null;
 
     #[ORM\Column]
-    private ?float $player2Odds = null;
+    private ?float $awayPlayerOdds = null;
+
+    #[ORM\ManyToOne(inversedBy: 'matchResults')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Tourney $tourney = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getPlayer1(): ?User
+    public function getHomePlayer(): ?User
     {
-        return $this->player1;
+        return $this->homePlayer;
     }
 
-    public function setPlayer1(?User $player1): self
+    public function setHomePlayer(?User $homePlayer): self
     {
-        $this->player1 = $player1;
+        $this->homePlayer = $homePlayer;
 
         return $this;
     }
 
-    public function getPlayer2(): ?User
+    public function getAwayPlayer(): ?User
     {
-        return $this->player2;
+        return $this->awayPlayer;
     }
 
-    public function setPlayer2(?User $player2): self
+    public function setAwayPlayer(?User $awayPlayer): self
     {
-        $this->player2 = $player2;
+        $this->awayPlayer = $awayPlayer;
 
         return $this;
     }
@@ -84,26 +88,26 @@ class MatchResult
         return $this;
     }
 
-    public function getPlayer1RatingChange(): ?int
+    public function getHomePlayerRatingChange(): ?int
     {
-        return $this->player1RatingChange;
+        return $this->homePlayerRatingChange;
     }
 
-    public function setPlayer1RatingChange(int $player1RatingChange): self
+    public function setHomePlayerRatingChange(int $homePlayerRatingChange): self
     {
-        $this->player1RatingChange = $player1RatingChange;
+        $this->homePlayerRatingChange = $homePlayerRatingChange;
 
         return $this;
     }
 
-    public function getPlayer2RatingChange(): ?int
+    public function getAwayPlayerRatingChange(): ?int
     {
-        return $this->player2RatingChange;
+        return $this->awayPlayerRatingChange;
     }
 
-    public function setPlayer2RatingChange(int $player2RatingChange): self
+    public function setAwayPlayerRatingChange(int $awayPlayerRatingChange): self
     {
-        $this->player2RatingChange = $player2RatingChange;
+        $this->awayPlayerRatingChange = $awayPlayerRatingChange;
 
         return $this;
     }
@@ -132,26 +136,38 @@ class MatchResult
         return $this;
     }
 
-    public function getPlayer1Odds(): ?float
+    public function getHomePlayerOdds(): ?float
     {
-        return $this->player1Odds;
+        return $this->homePlayerOdds;
     }
 
-    public function setPlayer1Odds(float $player1Odds): self
+    public function setHomePlayerOdds(float $homePlayerOdds): self
     {
-        $this->player1Odds = $player1Odds;
+        $this->homePlayerOdds = $homePlayerOdds;
 
         return $this;
     }
 
-    public function getPlayer2Odds(): ?float
+    public function getAwayPlayerOdds(): ?float
     {
-        return $this->player2Odds;
+        return $this->awayPlayerOdds;
     }
 
-    public function setPlayer2Odds(float $player2Odds): self
+    public function setAwayPlayerOdds(float $awayPlayerOdds): self
     {
-        $this->player2Odds = $player2Odds;
+        $this->awayPlayerOdds = $awayPlayerOdds;
+
+        return $this;
+    }
+
+    public function getTourney(): ?Tourney
+    {
+        return $this->tourney;
+    }
+
+    public function setTourney(?Tourney $tourney): self
+    {
+        $this->tourney = $tourney;
 
         return $this;
     }

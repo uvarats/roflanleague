@@ -9,33 +9,33 @@ namespace App\Entity;
  */
 class Odds
 {
-    private float $firstOdds;
-    private float $secondOdds;
+    private float $homeOdds;
+    private float $awayOdds;
 
     public static function create(
         float $firstOdds, float $secondOdds
     ): Odds
     {
         $odds = new self();
-        $odds->firstOdds = $firstOdds;
-        $odds->secondOdds = $secondOdds;
+        $odds->homeOdds = $firstOdds;
+        $odds->awayOdds = $secondOdds;
         return $odds;
     }
 
     /**
      * @return float
      */
-    public function getFirstOdds(): float
+    public function getHomeOdds(): float
     {
-        return $this->firstOdds;
+        return $this->homeOdds;
     }
 
     /**
      * @return float
      */
-    public function getSecondOdds(): float
+    public function getAwayOdds(): float
     {
-        return $this->secondOdds;
+        return $this->awayOdds;
     }
 
 }

@@ -195,4 +195,7 @@ class ChallongeService
         return $this->challonge->getParticipants($tourney);
     }
 
+    public function setMatchResult(int $matchId) {
+        $this->challonge;
+    }
 }
