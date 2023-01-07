@@ -10,8 +10,11 @@ use Reflex\Challonge\DTO\MatchDto;
 class MatchOdds
 {
     private MatchDto $match;
+
     private User $firstPlayer;
+
     private User $secondPlayer;
+
     private Odds $odds;
 
     #[Pure]

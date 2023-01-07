@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\Entity\Enum\Result;
 use App\Entity\Enum\TournamentType;
+use App\Entity\MatchResult;
 use App\Entity\Tourney;
 use App\Entity\User;
+use App\Exception\InvalidMatchResultException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
+use PHPUnit\Framework\Exception;
 use Reflex\Challonge\Challonge;
 use Reflex\Challonge\DTO\MatchDto;
 use Reflex\Challonge\DTO\Participant;
@@ -21,6 +25,7 @@ use Reflex\Challonge\Exceptions\StillRunningException;
 use Reflex\Challonge\Exceptions\UnauthorizedException;
 use Reflex\Challonge\Exceptions\UnexpectedErrorException;
 use Reflex\Challonge\Exceptions\ValidationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class ChallongeService
 {
@@ -37,15 +42,6 @@ class ChallongeService
         return $this->challonge;
     }
 
-    /**
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws ServerException
-     * @throws ValidationException
-     * @throws InvalidFormatException
-     * @throws \JsonException
-     * @throws UnauthorizedException
-     */
     public function createTournament(string $name, TournamentType $type): Tournament
     {
         return $this->challonge->createTournament([
@@ -54,15 +50,6 @@ class ChallongeService
         ]);
     }
 
-    /**
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws ServerException
-     * @throws InvalidFormatException
-     * @throws ValidationException
-     * @throws \JsonException
-     * @throws UnauthorizedException
-     */
     public function addParticipant(Tourney $tourney, User $user): Participant
     {
         return $this->fetchTournament($tourney)
@@ -72,110 +59,54 @@ class ChallongeService
             ]);
     }
 
-    /**
-     * @throws ValidationException
-     * @throws UnauthorizedException
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws ServerException
-     * @throws InvalidFormatException
-     * @throws \JsonException
-     */
     public function removeParticipant(Tourney $tourney, User $user): bool
     {
-        $tournament = $this->fetchTournament($tourney);
-        $iterator = $this->challonge->getParticipants($tourney->getChallongeUrl())->getIterator();
-        /** @var Participant $item */
-        foreach ($iterator as $item) {
-            if ($item->name === $user->getUsername()) {
-                $tournament->deleteParticipant($item->id);
-                return true;
-            }
-        }
-        return false;
+        $participants = $this->challonge->getParticipants($tourney->getChallongeUrl());
+        $username = $user->getUsername();
+
+        $participant = $this->findParticipant(static function (Participant $participant) use ($username) {
+            return $participant->name === $username;
+        }, $participants);
+
+        return (bool)$participant->delete();
     }
 
-    /**
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws ServerException
-     * @throws ValidationException
-     * @throws InvalidFormatException
-     * @throws \JsonException
-     * @throws UnauthorizedException
-     * @throws AlreadyStartedException
-     */
+    public function fetchTournament(Tourney $tourney): Tournament
+    {
+        return $this->challonge->fetchTournament($tourney->getChallongeUrl());
+    }
+
     public function startTournament(Tourney $tourney): Tournament
     {
-        return $this->getChallonge()
-            ->fetchTournament($tourney->getChallongeUrl())
-            ->start();
+        return $this->fetchTournament($tourney)->start();
     }
 
-    /**
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws StillRunningException
-     * @throws ServerException
-     * @throws InvalidFormatException
-     * @throws ValidationException
-     * @throws \JsonException
-     * @throws UnauthorizedException
-     */
+    public function resetTournament(Tourney $tourney): Tournament
+    {
+        return $this->fetchTournament($tourney)->reset();
+    }
+
     public function endTournament(Tourney $tourney): Tournament
     {
-        return $this->getChallonge()
-            ->fetchTournament($tourney->getChallongeUrl())
+        return $this->fetchTournament($tourney)
             ->finalize();
     }
 
-    /**
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws ServerException
-     * @throws InvalidFormatException
-     * @throws ValidationException
-     * @throws \JsonException
-     * @throws UnauthorizedException
-     */
     public function randomizeParticipants(Tourney $tourney): void
     {
         $this->getChallonge()
             ->randomizeParticipants($tourney->getChallongeUrl());
     }
 
-    /**
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws ServerException
-     * @throws InvalidFormatException
-     * @throws ValidationException
-     * @throws \JsonException
-     * @throws UnauthorizedException
-     */
     public function removeTournament(string $tourney): void
     {
         $this->challonge->deleteTournament($tourney);
     }
 
-    /**
-     * @throws UnexpectedErrorException
-     * @throws NotFoundException
-     * @throws ServerException
-     * @throws ValidationException
-     * @throws InvalidFormatException
-     * @throws \JsonException
-     * @throws UnauthorizedException
-     */
-    public function fetchTournament(Tourney $tourney): Tournament
-    {
-        return $this->challonge->fetchTournament($tourney->getChallongeUrl());
-    }
-
     public function getMatches(Tourney $tourney, string $state = 'open'): Collection
     {
         $matches = $this->challonge->getMatches($tourney->getChallongeUrl());
-        return $matches->filter(function (MatchDto $match) use ($state) {
+        return $matches->filter(static function (MatchDto $match) use ($state) {
             return ($match->player1_id != null && $match->player2_id != null) && $match->state === $state;
         });
     }
@@ -185,17 +116,53 @@ class ChallongeService
         if ($tourney instanceof Tourney) {
             $tourney = $tourney->getChallongeUrl();
         }
+
         return $this->challonge->getParticipant($tourney, $participantId);
     }
 
-    public function getParticipants(string|int|Tourney $tourney) {
-        if ($tourney instanceof Tourney) {
-            $tourney = $tourney->getChallongeUrl();
-        }
-        return $this->challonge->getParticipants($tourney);
+    public function getParticipants(Tourney $tourney): Collection
+    {
+        return $this->challonge->getParticipants($tourney->getChallongeUrl());
     }
 
-    public function setMatchResult(int $matchId) {
-        $this->challonge;
+    /**
+     * @param callable $condition
+     * @param Collection<Participant> $participants
+     * @return Participant
+     */
+    public function findParticipant(callable $condition, Collection $participants): Participant
+    {
+        return $participants->first($condition);
+    }
+
+    public function setMatchResult(MatchResult $result): MatchDto
+    {
+        $tourney = $result->getTourney();
+        $challongeTourney = $tourney->getChallongeUrl();
+        $matchId = $result->getChallongeMatchId();
+        $match = $this->challonge->getMatch($challongeTourney, $matchId);
+
+        $resultEnum = $result->getResult();
+
+        $winnerId = match ($resultEnum) {
+            Result::FIRST_WIN => $match->player1_id,
+            Result::SECOND_WIN => $match->player2_id,
+            Result::TIE => 'tie',
+            Result::CANCELED, null => throw new InvalidMatchResultException($result),
+        };
+
+        return $match->update([
+            'winner_id' => $winnerId,
+            'scores_csv' => $this->getScoreForResult($resultEnum),
+        ]);
+    }
+
+    private function getScoreForResult(Result $result): string
+    {
+        return match ($result) {
+            Result::FIRST_WIN => '1-0',
+            Result::SECOND_WIN => '0-1',
+            Result::TIE, Result::CANCELED => '0-0',
+        };
     }
 }

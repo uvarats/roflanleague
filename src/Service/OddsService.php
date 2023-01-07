@@ -31,8 +31,8 @@ class OddsService
         $secondRating = $secondUser->getRating();
 
         $allOutcomes = $this->applyMargin($firstRating + $secondRating);
-        $firstOdds = 1 / ($firstRating / $allOutcomes);
-        $secondOdds = 1 / ($secondRating / $allOutcomes);
+        $firstOdds = round(1 / ($firstRating / $allOutcomes), 2);
+        $secondOdds = round(1 / ($secondRating / $allOutcomes), 2);
 
         return Odds::create($firstOdds, $secondOdds);
     }
@@ -45,9 +45,9 @@ class OddsService
     public function getMatchesOdds(Collection $matches, Tourney $tourney): Collection
     {
         $users = $this->em->getRepository(User::class);
-        $participants = $this->challonge->getParticipants($tourney->getChallongeUrl());
-        $findCallback = function (int $id, Collection $participants) {
-            return $participants->first(function (Participant $participant) use ($id) {
+        $participants = $this->challonge->getParticipants($tourney);
+        $findCallback = static function (int $id, Collection $participants) {
+            return $participants->first(static function (Participant $participant) use ($id) {
                 return $participant->id === $id;
             });
         };
@@ -73,8 +73,7 @@ class OddsService
     private function applyMargin(float $outcomes): float
     {
         $margin = $this->marginPercent / 100;
-        $outcomes += $outcomes * $margin;
-        return $outcomes;
+        return $outcomes + $outcomes * $margin;
     }
 
 }

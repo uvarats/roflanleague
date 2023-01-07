@@ -4,8 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Entity;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,12 +29,14 @@ class ProfileController extends AbstractController
 
 
     #[Route('/u/{id}', name: 'app_concrete_profile')]
-    #[Entity('user', expr: 'repository.getFullUser(id)')]
-    public function concreteProfile(User $user): Response
+    public function concreteProfile(
+        #[MapEntity(expr: 'repository.getFullUser(id)')] User $user
+    ): Response
     {
         if ($user->isBanned() && !$this->isGranted('ROLE_ADMIN')) {
             throw new NotFoundHttpException("This user is banned.");
         }
+
         $users = $this->em->getRepository(User::class);
         $position = $users->getTopPosition($user);
         return $this->render('profile/index.html.twig', [

@@ -12,48 +12,62 @@
             <a class="link-dark text-decoration-none"
                href="https://challonge.com/{{ tourney.challongeUrl }}">{{ tourney.challongeUrl }}</a>
         </div>
-        <div id="matches">
-            <span class="h4 mb-2">Ближайшие матчи</span>
-            <div class="row row-cols-md-3 row-cols-1">
-                {% for odd in odds %}
-                    <div class="match-object col d-flex flex-column">
-                        <div class="inner-container bg-light rounded m-2">
-                            <div class="d-flex flex-md-row flex-column justify-content-md-between align-items-center">
-                                <div class="first-user d-flex flex-column m-3 mb-0" id="{{ odd.firstPlayer.id }}">
-                                    <div class="d-flex flex-row align-items-center">
-                                        {{ include('_avatar.html.twig', { name: odd.firstPlayer.username, width: 32, height: 32}) }}
-                                        <a class="fw-bold text-decoration-none text-dark"
-                                           href="{{ path('app_concrete_profile', { id: odd.firstPlayer.id}) }}">
-                                            {{ odd.firstPlayer.username }}
-                                        </a>
+        {% if odds|length > 0 %}
+            <div id="matches">
+                <span class="h4 mb-2">Ближайшие матчи</span>
+                <div class="row row-cols-md-3 row-cols-1">
+                    {% for odd in odds %}
+                        <div class="match-object col d-flex flex-column" {{ stimulus_controller('match', {
+                            'homePlayerId': odd.firstPlayer.id,
+                            'awayPlayerId': odd.secondPlayer.id,
+                            'homePlayerOdds': odd.odds.homeOdds,
+                            'awayPlayerOdds': odd.odds.awayOdds,
+                            'challongeMatchId': odd.match.id,
+                            'tourneyId': tourney.id,
+                            'resultRoute': path('app_match_result'),
+                            'randomRoute': path('app_match_random'),
+                        }) }}
+                                {{ stimulus_target('match', 'matchObject') }}
+                        >
+                            <div class="inner-container bg-light rounded m-2">
+                                <div class="d-flex flex-md-row flex-column justify-content-md-between align-items-center">
+                                    <div class="first-user d-flex flex-column m-3 mb-0" id="{{ odd.firstPlayer.id }}">
+                                        <div class="d-flex flex-row align-items-center">
+                                            {{ include('_avatar.html.twig', { name: odd.firstPlayer.username, width: 32, height: 32}) }}
+                                            <a class="fw-bold text-decoration-none text-dark"
+                                               href="{{ path('app_concrete_profile', { id: odd.firstPlayer.id}) }}">
+                                                {{ odd.firstPlayer.username }}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="second-user d-flex flex-column m-3 mb-0" id="{{ odd.secondPlayer.id }}">
+                                        <div class="d-flex flex-row align-items-center">
+                                            {{ include('_avatar.html.twig', { name: odd.secondPlayer.username, width: 32, height: 32}) }}
+                                            <a class="fw-bold text-decoration-none text-dark"
+                                               href="{{ path('app_concrete_profile', { id: odd.secondPlayer.id}) }}">
+                                                {{ odd.secondPlayer.username }}
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="second-user d-flex flex-column m-3 mb-0" id="{{ odd.secondPlayer.id }}">
-                                    <div class="d-flex flex-row align-items-center">
-                                        {{ include('_avatar.html.twig', { name: odd.secondPlayer.username, width: 32, height: 32}) }}
-                                        <a class="fw-bold text-decoration-none text-dark"
-                                           href="{{ path('app_concrete_profile', { id: odd.secondPlayer.id}) }}">
-                                            {{ odd.secondPlayer.username }}
-                                        </a>
-                                    </div>
+                                <hr>
+                                <div class="d-flex flex-row justify-content-around mb-3">
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <button class="btn btn-outline-success" {{ stimulus_action('match', 'firstWin') }}>{{ odd.odds.homeOdds }}</button>
+                                        <button class="btn btn-outline-info" {{ stimulus_action('match', 'randomResult') }}>Случайно</button>
+                                        <button class="btn btn-outline-danger" {{ stimulus_action('match', 'secondWin') }}>{{ odd.odds.awayOdds }}</button>
+                                    {% else %}
+                                        <span>{{ odd.odds.homeOdds }}</span>
+                                        <span>{{ odd.odds.awayOdds }}</span>
+                                    {% endif %}
                                 </div>
-                            </div>
-                            <hr>
-                            <div class="d-flex flex-row justify-content-around mb-3">
-                                {% if is_granted('ROLE_ADMIN') %}
-                                    <button class="btn btn-outline-success">{{ odd.odds.homeOdds }}</button>
-                                    <button class="btn btn-outline-info">Случайно</button>
-                                    <button class="btn btn-outline-danger">{{ odd.odds.awayOdds }}</button>
-                                {% else %}
-                                    <span>{{ odd.odds.homeOdds }}</span>
-                                    <span>{{ odd.odds.awayOdds }}</span>
-                                {% endif %}
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+
+        {% endif %}
         <div class="standings">
             <span class="h4 mb-2">Сетка</span>
             <iframe src="https://challonge.com/{{ tourney.challongeUrl }}/module?theme=2&show_final_results=1&show_standings=1"

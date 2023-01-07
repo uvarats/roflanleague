@@ -4,26 +4,23 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Enum\Result;
 use App\Entity\MatchOdds;
-use App\Entity\MatchResult;
 use App\Entity\Tourney;
-use App\Entity\User;
 use App\Service\ChallongeService;
 use App\Service\OddsService;
 use Doctrine\ORM\EntityManagerInterface;
-use Illuminate\Support\Collection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SeasonController extends AbstractController
 {
 
     public function __construct(
-        private EntityManagerInterface $em,
-        private ChallongeService $service,
-        private OddsService $odds
+        private readonly EntityManagerInterface $em,
+        private readonly ChallongeService       $challonge,
+        private readonly OddsService            $odds
     )
     {
     }
@@ -40,9 +37,13 @@ class SeasonController extends AbstractController
     }
 
     #[Route('/season/{id}', name: 'app_season_tourney')]
+    #[IsGranted(
+        'IS_AUTHENTICATED_FULLY',
+        message: 'Данную страницу могут просматривать только зарегистрированные пользователи'
+    )]
     public function tourney(Tourney $tourney): Response
     {
-        $matches = $this->service->getMatches($tourney);
+        $matches = $this->challonge->getMatches($tourney);
         /** @var MatchOdds[] $odds */
         $odds = $this->odds->getMatchesOdds($matches, $tourney)->all();
         return $this->render('season/tourney.html.twig', [
