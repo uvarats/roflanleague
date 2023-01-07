@@ -3,33 +3,28 @@ import {Modal} from "bootstrap";
 import axios from "axios";
 
 export default class extends Controller {
-    static targets = ["modal", "confirmButton", "alertContainer"];
+    static targets = ["modal", "confirmButton"];
 
     static values = {
         startUrl: String,
         randomizeUrl: String,
         endUrl: String,
         removeUrl: String,
+        resetUrl: String,
     };
 
     confirmModal;
     relatedTarget;
+    alertContainer;
 
     connect() {
         this.confirmModal = new Modal(this.modalTarget);
-    }
-
-    getParamsWithId(object) {
-        let tourneyObject = object.closest('.tourney-object');
-        let params = new URLSearchParams();
-        params.append('id', tourneyObject.id);
-        return params;
+        this.alertContainer = document.getElementById('alert-container');
     }
 
     async start(event) {
-        let params = this.getParamsWithId(event.target);
         try {
-            let response = await axios.post(this.startUrlValue, params);
+            let response = await axios.post(this.startUrlValue);
             this.alert('success', response.data.success);
         } catch (e) {
             this.alert('danger', e.response.data.detail);
@@ -37,19 +32,26 @@ export default class extends Controller {
     }
 
     async randomize(event) {
-        let params = this.getParamsWithId(event.target);
         try {
-            let response = await axios.post(this.randomizeUrlValue, params);
+            let response = await axios.post(this.randomizeUrlValue);
             this.alert('success', response.data.success);
         } catch (e) {
             this.alert('danger', e.response.data.detail);
         }
     }
 
-    async end(event) {
-        let params = this.getParamsWithId(event.target);
+    async reset(event) {
         try {
-            let response = await axios.post(this.endUrlValue, params);
+            let response = await axios.post(this.resetUrlValue);
+            this.alert('success', response.data.message);
+        } catch (e) {
+            this.alert('danger', e.response.data.detail);
+        }
+    }
+
+    async end(event) {
+        try {
+            let response = await axios.post(this.endUrlValue);
             this.alert('success', response.data.success);
         } catch (e) {
             this.alert('danger', e.response.data.detail);
@@ -63,7 +65,7 @@ export default class extends Controller {
     }
 
     alert(key, text) {
-        this.alertContainerTarget.innerHTML = [
+        this.alertContainer.innerHTML = [
             `<div class="alert alert-${key} alert-dismissible" role="alert">`,
             `   <div>${text}</div>`,
             '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
@@ -71,7 +73,7 @@ export default class extends Controller {
         ].join('');
     }
 
-    confirm(event) {
+    async confirm(event) {
         let tourneyObject = this.relatedTarget.closest('.tourney-object');
 
         let confirmButton = this.confirmButtonTarget;
@@ -84,23 +86,15 @@ export default class extends Controller {
              </div>`;
         confirmButton.disabled = true;
 
-        let tourneyId = tourneyObject.id;
-
         let modal = this.confirmModal;
 
-        let data = new URLSearchParams();
-        data.append('id', tourneyId);
-
-        axios.post(this.removeUrlValue, data)
-            .then(
-                function (response) {
-                    confirmButton.innerHTML = oldButtonContent;
-                    confirmButton.disabled = false;
-                    if (response.data.success) {
-                        tourneyObject.remove();
-                        modal.hide();
-                    }
-                }
-            );
+        let response = await axios.post(this.removeUrlValue);
+        confirmButton.innerHTML = oldButtonContent;
+        confirmButton.disabled = false;
+        if (response.data.success) {
+            tourneyObject.remove();
+            modal.hide();
+            this.disconnect();
+        }
     }
 }

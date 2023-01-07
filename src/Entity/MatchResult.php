@@ -16,20 +16,14 @@ class MatchResult
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne()]
+    #[ORM\ManyToOne(fetch: 'EAGER')]
     private ?User $homePlayer = null;
 
-    #[ORM\ManyToOne()]
+    #[ORM\ManyToOne(fetch: 'EAGER')]
     private ?User $awayPlayer = null;
 
     #[ORM\Column(type: 'string', length: 15, enumType: Result::class)]
     private ?Result $result = null;
-
-    #[ORM\Column]
-    private ?int $homePlayerRatingChange = null;
-
-    #[ORM\Column]
-    private ?int $awayPlayerRatingChange = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $finishedAt = null;
@@ -170,5 +164,23 @@ class MatchResult
         $this->tourney = $tourney;
 
         return $this;
+    }
+
+    public function getWinner(): ?User
+    {
+        return match ($this->result) {
+            Result::FIRST_WIN => $this->homePlayer,
+            Result::SECOND_WIN => $this->awayPlayer,
+            Result::TIE, Result::CANCELED, null => null,
+        };
+    }
+
+    public function getLoser(): ?User
+    {
+        return match ($this->result) {
+            Result::FIRST_WIN => $this->awayPlayer,
+            Result::SECOND_WIN => $this->homePlayer,
+            Result::TIE, Result::CANCELED, null => null,
+        };
     }
 }
