@@ -138,11 +138,9 @@ class Tourney
 
     public function removeMatchResult(MatchResult $matchResult): self
     {
-        if ($this->matchResults->removeElement($matchResult)) {
-            // set the owning side to null (unless already changed)
-            if ($matchResult->getTourney() === $this) {
-                $matchResult->setTourney(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->matchResults->removeElement($matchResult) && $matchResult->getTourney() === $this) {
+            $matchResult->setTourney(null);
         }
 
         return $this;

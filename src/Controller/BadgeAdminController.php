@@ -38,6 +38,7 @@ class BadgeAdminController extends AbstractController
 
         return $this->badgeAction($badge, $request);
     }
+
     #[Route('/edit/{id}', name: 'app_admin_badges_edit')]
     public function edit(Badge $badge, Request $request): RedirectResponse|Response
     {
@@ -54,7 +55,7 @@ class BadgeAdminController extends AbstractController
         if ($id) {
             $badges = $this->em->getRepository(Badge::class);
             $badge = $badges->find($id);
-            if($badge) {
+            if($badge !== null) {
                 $this->em->remove($badge);
                 $this->em->flush();
                 return $this->json([
@@ -63,6 +64,7 @@ class BadgeAdminController extends AbstractController
             }
             $errorMsg = "Badge object not found by this id";
         }
+
         return $this->json([
             "error" => $errorMsg,
         ]);

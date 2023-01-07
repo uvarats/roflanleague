@@ -10,6 +10,7 @@ namespace App\Entity;
 class Odds
 {
     private float $homeOdds;
+
     private float $awayOdds;
 
     public static function create(

@@ -92,6 +92,7 @@ class ChallongeService
                 return true;
             }
         }
+
         return false;
     }
 
@@ -175,7 +176,7 @@ class ChallongeService
     public function getMatches(Tourney $tourney, string $state = 'open'): Collection
     {
         $matches = $this->challonge->getMatches($tourney->getChallongeUrl());
-        return $matches->filter(function (MatchDto $match) use ($state) {
+        return $matches->filter(static function (MatchDto $match) use ($state) {
             return ($match->player1_id != null && $match->player2_id != null) && $match->state === $state;
         });
     }
@@ -185,13 +186,16 @@ class ChallongeService
         if ($tourney instanceof Tourney) {
             $tourney = $tourney->getChallongeUrl();
         }
+
         return $this->challonge->getParticipant($tourney, $participantId);
     }
 
-    public function getParticipants(string|int|Tourney $tourney) {
+    public function getParticipants(string|int|Tourney $tourney): Collection
+    {
         if ($tourney instanceof Tourney) {
             $tourney = $tourney->getChallongeUrl();
         }
+
         return $this->challonge->getParticipants($tourney);
     }
 

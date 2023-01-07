@@ -55,12 +55,13 @@ class TourneyAdminController extends AbstractController
             $this->em->persist($tourney);
             try {
                 $this->em->flush();
-            } catch (\Throwable $exception) {
+            } catch (\Throwable $throwable) {
                 $this->challonge->removeTournament($challongeTourney->url);
             }
 
             return $this->redirectToRoute('app_tourneys');
         }
+
         // using one template for adding and editing
         return $this->renderForm('admin/tourney/tourney_add.html.twig', [
             'tourneyForm' => $form,
@@ -79,6 +80,7 @@ class TourneyAdminController extends AbstractController
 
             return $this->redirectToRoute('app_tourneys');
         }
+
         // using one template for adding and editing
         return $this->renderForm('admin/tourney/tourney_add.html.twig', [
             'tourneyForm' => $form,
@@ -91,7 +93,7 @@ class TourneyAdminController extends AbstractController
     {
         $id = $request->request->get('id');
         $tourney = $this->em->getRepository(Tourney::class)->find($id);
-        if ($tourney) {
+        if ($tourney !== null) {
             $this->challonge
                 ->removeTournament($tourney->getChallongeUrl());
             $this->em->remove($tourney);
@@ -126,6 +128,7 @@ class TourneyAdminController extends AbstractController
                 'Только у нового турнира можно перемешивать участников!'
             );
         }
+
         $this->challonge->randomizeParticipants($tourney);
         return $this->json([
             'success' => "Участники успешно перемешаны!",
@@ -139,6 +142,7 @@ class TourneyAdminController extends AbstractController
         if ($tourney->getState() !== TourneyState::STARTED->value) {
             return $this->json(['error' => 'Турнир не запущен']);
         }
+
         $this->challonge->endTournament($tourney);
 
         return $this->json(['success' => "Турнир завершен!"]);
@@ -184,7 +188,7 @@ class TourneyAdminController extends AbstractController
         if ($id) {
             $users = $this->em->getRepository(User::class);
             $user = $users->find($id);
-            if ($user) {
+            if ($user !== null) {
                 if ($action === ParticipantAction::ADD &&
                     $this->challonge->addParticipant($tourney, $user)
                 ) {
@@ -205,6 +209,7 @@ class TourneyAdminController extends AbstractController
                 'error' => 'User with this id does not exists!',
             ]);
         }
+
         return $this->json([
             'error' => 'Please, provide id...',
         ]);
@@ -217,7 +222,7 @@ class TourneyAdminController extends AbstractController
         if ($page) {
             $users = $this->em->getRepository(User::class);
             $additionalUsers = $users->getUsersNotInTourney($tourney, $page);
-            $result = array_map(function (User $target) {
+            $result = array_map(static function (User $target) {
                 return [
                     'id' => $target->getId(),
                     'name' => $target->getUsername()
@@ -225,6 +230,7 @@ class TourneyAdminController extends AbstractController
             }, $additionalUsers);
             return $this->json($result);
         }
+
         return new JsonResponse([
             'error' => 'Page is not provided :/',
         ]);

@@ -3,19 +3,13 @@
 namespace App\Controller;
 
 use App\Entity\Badge;
-use App\Entity\Tourney;
 use App\Entity\User;
-use App\Form\TourneyType;
 use Doctrine\ORM\EntityManagerInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
-use stdClass;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Config\Framework\RequestConfig;
 
 #[Route('/admin')]
 class AdminController extends AbstractController
@@ -26,6 +20,7 @@ class AdminController extends AbstractController
     )
     {
     }
+
     #[Route('', name: 'app_admin')]
     public function index(): Response
     {
@@ -59,7 +54,7 @@ class AdminController extends AbstractController
     public function switchUser(int $id): JsonResponse
     {
         $user = $this->em->getRepository(User::class)->find($id);
-        if ($user) {
+        if ($user !== null) {
             $userStatus = $user->isBanned();
             $user->setIsBanned(!$userStatus);
             $this->em->flush();
@@ -72,11 +67,11 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/user/{id}/verify', name: 'app_admin_user_verify', methods: [ "POST" ])]
+    #[Route('/user/{id}/verify', name: 'app_admin_user_verify', methods: ["POST"])]
     public function verify(int $id): JsonResponse
     {
         $user = $this->em->getRepository(User::class)->find($id);
-        if ($user) {
+        if ($user !== null) {
             $user->setIsVerified(true);
             $this->em->flush();
             return $this->json([
@@ -88,17 +83,18 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/user/{id}/add-badge', name: 'app_admin_user_badge_add', methods: [ "POST" ])]
+    #[Route('/user/{id}/add-badge', name: 'app_admin_user_badge_add', methods: ["POST"])]
     public function addBadge(User $user, Request $request): JsonResponse
     {
         $badgeId = $request->request->get('id');
         $badge = $this->em->getRepository(Badge::class)->find($badgeId);
-        if($badge) {
+        if ($badge !== null) {
             if ($user->getBadges()->contains($badge)) {
                 return $this->json([
                     'error' => 'User already has this badge',
                 ]);
             }
+
             $user->addBadge($badge);
             $this->em->flush();
             return $this->json([
@@ -110,8 +106,9 @@ class AdminController extends AbstractController
                 ],
             ]);
         }
+
         return $this->json([
-           'error' => 'Badge was not found',
+            'error' => 'Badge was not found',
         ]);
     }
 
@@ -120,7 +117,7 @@ class AdminController extends AbstractController
     {
         $badgeId = $request->request->get('id');
         $badge = $this->em->getRepository(Badge::class)->find($badgeId);
-        if ($badge) {
+        if ($badge !== null) {
             $user->removeBadge($badge);
             $this->em->flush();
             return $this->json([

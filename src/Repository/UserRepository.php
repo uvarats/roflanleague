@@ -86,6 +86,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setMaxResults($resultsPerPage)
             ->getResult();
     }
+
     public function getUsersNotInTourney(Tourney $tourney, int $page = 1, int $resultsPerPage = 30) {
         $em = $this->getEntityManager();
         $firstResult = ($page - 1) * $resultsPerPage;
@@ -111,6 +112,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getQuery()
             ->getResult();
     }
+
     public function getTopPosition(User $user) {
         return $this->createQueryBuilder('u')
             ->select('count(u)')
@@ -139,6 +141,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getSingleResult();
         return $user;
     }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

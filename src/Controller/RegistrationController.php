@@ -34,7 +34,7 @@ class RegistrationController extends AbstractController
         EntityManagerInterface      $entityManager
     ): Response
     {
-        if ($this->getUser()) {
+        if ($this->getUser() !== null) {
             return $this->redirectToRoute('app_main');
         }
 
@@ -75,6 +75,7 @@ class RegistrationController extends AbstractController
                     И да, письмо с 99% вероятности оказалось в папке "Спам", ищите его там.'
             ]);
         }
+
         if ($form->isSubmitted() && !$form->isValid()) {
             $errors = $form->getErrors(true);
             foreach ($errors as $error) {
@@ -100,15 +101,15 @@ class RegistrationController extends AbstractController
 
         $user = $userRepository->find($id);
 
-        if (null === $user) {
+        if (!$user instanceof \App\Entity\User) {
             return $this->redirectToRoute('app_register');
         }
 
         // validate email confirmation link, sets User::isVerified=true and persists
         try {
             $this->emailVerifier->handleEmailConfirmation($request, $user);
-        } catch (VerifyEmailExceptionInterface $exception) {
-            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
+        } catch (VerifyEmailExceptionInterface $verifyEmailException) {
+            $this->addFlash('verify_email_error', $translator->trans($verifyEmailException->getReason(), [], 'VerifyEmailBundle'));
 
             return $this->redirectToRoute('app_register');
         }
