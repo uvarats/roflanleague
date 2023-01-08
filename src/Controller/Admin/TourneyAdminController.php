@@ -62,7 +62,7 @@ class TourneyAdminController extends AbstractController
                 $this->challonge->removeTournament($challongeTourney->url);
             }
 
-            return $this->redirectToRoute('app_tourneys');
+            return $this->redirectToRoute('app_admin_tourneys');
         }
 
         // using one template for adding and editing
