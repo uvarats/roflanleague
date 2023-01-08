@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}Подключение существующего турнира{% endblock %}
 
 {% block body %}
 
@@ -23,6 +23,7 @@
                 {{ form_label(tourneyForm.name) }}
             </div>
 
+            {# TODO: make tourney linking #}
             <div class="form-floating mb-3">
                 {{ form_widget(tourneyForm.type, {
                     'attr': {

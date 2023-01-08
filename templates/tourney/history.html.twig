@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Завершенные турниры!{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <span class="h2">
+                Завершенные турниры
+            </span>
+        </div>
+        <hr>
+        {% if tourneys|length == 0 %}
+            <span>Извините, в текущий момент нет завершенных турниров</span>
+        {% else %}
+            {% for tourney in tourneys %}
+                <div class="tourney-object">
+                    <div class="tourney-object-header d-flex flex-column">
+                        <span class="h3">{{ tourney.name }}</span>
+                        <span class="mb-3">Участники: {{ tourney.participants.count }}</span>
+                        <a class="btn btn-outline-primary" href="{{ path('app_tourney', { id: tourney.id }) }}">
+                            Перейти на страницу турнира
+                        </a>
+                    </div>
+                    <hr>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {{ include('footer.html.twig') }}
+{% endblock %}

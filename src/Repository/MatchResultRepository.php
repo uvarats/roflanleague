@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\MatchResult;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +40,29 @@ class MatchResultRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    private function userMatches(User $user): QueryBuilder
+    {
+        return $this->createQueryBuilder('result')
+            ->where(':user = result.homePlayer')
+            ->orWhere(':user = result.awayPlayer')
+            ->setParameter('user', $user);
+    }
+    public function getUserMatches(User $user): Query
+    {
+        return $this->userMatches($user)
+            ->orderBy('result.finishedAt', 'DESC')
+            ->getQuery();
+    }
+
+    public function getLastMatches(User $user, int $count): array
+    {
+        return $this->userMatches($user)
+            ->orderBy('result.finishedAt', 'DESC')
+            ->setMaxResults($count)
+            ->getQuery()
+            ->getResult();
     }
 
 //    /**

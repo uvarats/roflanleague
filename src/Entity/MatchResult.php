@@ -183,4 +183,14 @@ class MatchResult
             Result::TIE, Result::CANCELED, null => null,
         };
     }
+
+    public function isWinner(User $user): bool
+    {
+        return $this->getWinner() === $user;
+    }
+
+    public function isLoser(User $user): bool
+    {
+        return !$this->isWinner($user);
+    }
 }
