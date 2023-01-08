@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Enum\TourneyState;
 use App\Entity\Tourney;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -47,6 +49,14 @@ class TourneyRepository extends ServiceEntityRepository
             ->setParameter('id', $id)
             ->getQuery();
         return $query->getSingleResult();
+    }
+
+    public function getByStateQuery(TourneyState $state): Query
+    {
+        return $this->createQueryBuilder('tourney')
+            ->where('tourney.state = :state')
+            ->setParameter('state', $state->value)
+            ->getQuery();
     }
 
 //    /**

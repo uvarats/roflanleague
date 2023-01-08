@@ -2,8 +2,10 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\TournamentType;
 use App\Entity\Tourney;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TelType;
@@ -18,6 +20,11 @@ class TourneyType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Название турнира',
+            ])
+            ->add('type', EnumType::class, [
+                'class' => TournamentType::class,
+                'mapped' => false,
+                'label' => 'Тип турнира',
             ])
             ->add('impactCoefficient', NumberType::class, [
                 'label' => 'Коэффициент важности турнира'

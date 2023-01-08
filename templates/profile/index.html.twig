@@ -8,7 +8,9 @@
 
     <div class="container" {{ stimulus_controller('profile') }}>
         <div class="d-flex flex-row mt-3 mb-4">
-            <img height="128" width="128" class="rounded-circle" src="https://avatars.dicebear.com/api/personas/{{ user.username }}.svg">
+            <img height="128" width="128" class="rounded-circle"
+                 src="https://avatars.dicebear.com/api/personas/{{ user.username }}.svg"
+                 alt="{{ user.username }}">
             <div class="d-flex flex-column">
                 <span class="text-black h2 ms-2">{{ user.username }}</span>
                 <div class="d-flex flex-row">
@@ -26,14 +28,63 @@
             </div>
         </div>
         <hr>
-        <div class="d-flex flex-row align-items-center p-3 pe-0 pt-1 rounded-3">
-            <div class="d-flex flex-column">
+        <div class="d-md-flex row row-cols-md-3 row-cols-2">
+            <div class="d-flex flex-column col">
                 <span class="fw-light fs-3">Позиция в топе</span>
                 <span class="fw-light fs-2">#{{ position }}</span>
             </div>
-            <div class="d-flex flex-column ms-md-5 ms-3">
+            <div class="d-flex flex-column col">
                 <span class="fw-light fs-3">Рейтинг</span>
                 <span class="fw-light fs-2">{{ user.rating }}</span>
+            </div>
+            <div class="d-flex flex-column col mt-2 mt-md-0">
+                <span class="fw-light fs-3">Форма</span>
+                <span>{{ lastMatches|form(user)|raw }}</span>
+            </div>
+        </div>
+        <hr>
+        <div>
+            <div class="d-flex flex-column">
+                <span class="h4 text-center">Матчи</span>
+                <div class="d-flex flex-grow-1 overflow-scroll">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Турнир</th>
+                            <th scope="col">Соперник</th>
+                            <th scope="col">Дата</th>
+                            <th scope="col">Результат</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {# @var result App\Entity\MatchResult #}
+                        {% for result in results %}
+                            <tr>
+                                <th scope="row">
+                                    <a href="{{ path('app_tourney', { id: result.tourney.id }) }}"
+                                       class="text-decoration-none text-dark"
+                                    >
+                                        {{ result.tourney.name }}
+                                    </a>
+                                </th>
+                                <td>
+                                    {% set opponent = result|opponent(user) %}
+                                    <a href="{{ path('app_concrete_profile', {id: opponent.id }) }}"
+                                       class="text-decoration-none text-dark"
+                                    >
+                                        {{ opponent.username }}
+                                    </a>
+                                </td>
+                                <td>{{ result.finishedAt|date('d.m.Y, H:i:s') }}</td>
+                                <td>{{ result|result(user)|raw }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="navbar">
+                    {{ knp_pagination_render(results, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+                </div>
             </div>
         </div>
     </div>

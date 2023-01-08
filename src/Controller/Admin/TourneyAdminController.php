@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Controller;
+namespace App\Controller\Admin;
 
 use App\Entity\Enum\ParticipantAction;
 use App\Entity\Enum\TournamentType;
@@ -33,7 +33,7 @@ class TourneyAdminController extends AbstractController
 
     }
 
-    #[Route('/tourneys', name: 'app_tourneys')]
+    #[Route('/tourneys', name: 'app_admin_tourneys')]
     public function tourneys(): Response
     {
         $tourneys = $this->em->getRepository(Tourney::class);
@@ -51,7 +51,7 @@ class TourneyAdminController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $challongeTourney = $this->challonge
-                ->createTournament($tourney->getName(), TournamentType::DOUBLE_ELIMINATION);
+                ->createTournament($tourney->getName(), $form->get('type')->getNormData());
 
             $tourney->setChallongeUrl($challongeTourney->url);
 
@@ -67,9 +67,14 @@ class TourneyAdminController extends AbstractController
 
         // using one template for adding and editing
         return $this->render('admin/tourney/tourney_add.html.twig', [
-            'tourneyForm' => $form,
+            'tourneyForm' => $form->createView(),
             'title' => "Создание турнира",
         ]);
+    }
+
+    #[Route('/tourneys/link', name: 'app_tourney_link')]
+    public function linkExistingTourney() {
+        // TODO: make tourney linking
     }
 
     #[Route('/tourney/{id}/edit', name: 'app_tourney_edit')]
