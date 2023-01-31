@@ -9,7 +9,6 @@
         "ext-iconv": "*",
         "ext-pdo": "*",
         "ext-sodium": "*",
-        "amphp/http-client": "^4.6",
         "baldinof/roadrunner-bundle": "^2.2",
         "doctrine/annotations": "^1.0",
         "doctrine/doctrine-bundle": "^2.7",
