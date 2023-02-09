@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Challonge\Factory;
 
-use App\Service\Challonge\Dto\ChallongeAuthDto;
+use App\Service\Challonge\Dto\ChallongeAuthUrlDto;
 
 class AuthSettingsFactory
 {
@@ -18,12 +18,14 @@ class AuthSettingsFactory
         'participants:write'
     ];
 
-    public function createSettings(): ChallongeAuthDto
+    public function createUrlInfo(): ChallongeAuthUrlDto
     {
-        return new ChallongeAuthDto(
-            self::REQUESTED_SCOPES,
-            $_ENV['CHALLONGE_CLIENT_ID'],
-            $_ENV['CHALLONGE_REDIRECT_URI']
+        $implodedScopes = implode(' ', self::REQUESTED_SCOPES);
+
+        return new ChallongeAuthUrlDto(
+            scope: $implodedScopes,
+            client_id: $_ENV['CHALLONGE_CLIENT_ID'],
+            redirect_uri: $_ENV['CHALLONGE_REDIRECT_URI']
         );
     }
 }

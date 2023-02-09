@@ -58,11 +58,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Tourney::class, mappedBy: 'participants')]
     private Collection $tourneys;
 
+    #[ORM\OneToMany(mappedBy: 'participant', targetEntity: UserRating::class, orphanRemoval: true)]
+    private Collection $userRatings;
+
+    #[ORM\OneToOne(mappedBy: 'relatedUser', cascade: ['persist', 'remove'])]
+    private ?ChallongeToken $challongeToken = null;
+
 
     public function __construct()
     {
         $this->badges = new ArrayCollection();
         $this->tourneys = new ArrayCollection();
+        $this->userRatings = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -246,6 +253,53 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->tourneys->removeElement($tourney)) {
             $tourney->removeParticipant($this);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserRating>
+     */
+    public function getUserRatings(): Collection
+    {
+        return $this->userRatings;
+    }
+
+    public function addUserRating(UserRating $userRating): self
+    {
+        if (!$this->userRatings->contains($userRating)) {
+            $this->userRatings->add($userRating);
+            $userRating->setParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserRating(UserRating $userRating): self
+    {
+        if ($this->userRatings->removeElement($userRating)) {
+            // set the owning side to null (unless already changed)
+            if ($userRating->getParticipant() === $this) {
+                $userRating->setParticipant(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getChallongeToken(): ?ChallongeToken
+    {
+        return $this->challongeToken;
+    }
+
+    public function setChallongeToken(ChallongeToken $challongeToken): self
+    {
+        // set the owning side of the relation if necessary
+        if ($challongeToken->getRelatedUser() !== $this) {
+            $challongeToken->setRelatedUser($this);
+        }
+
+        $this->challongeToken = $challongeToken;
 
         return $this;
     }
