@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\ValueResolver;
 
-use App\Dto\Interface\DTOInterface;
+use App\Dto\Interface\JsonDTOInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
@@ -19,7 +19,7 @@ class DTOResolver implements ValueResolverInterface
     {
         $type = $argument->getType();
 
-        if ($type === null || !is_subclass_of($type, DTOInterface::class)) {
+        if ($type === null || !is_subclass_of($type, JsonDTOInterface::class)) {
             return [];
         }
 

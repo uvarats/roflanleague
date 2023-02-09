@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Dto\Interface\DTOInterface;
+use App\Dto\Interface\JsonDTOInterface;
 
-class MatchResultDTO implements DTOInterface
+class MatchResultDTO implements JsonDTOInterface
 {
     public ?int $matchId = null;
     public ?int $tourneyId = null;

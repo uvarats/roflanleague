@@ -33,6 +33,9 @@ class Tourney
     #[ORM\OneToMany(mappedBy: 'tourney', targetEntity: MatchResult::class)]
     private Collection $matchResults;
 
+    #[ORM\Column]
+    private ?bool $is_ranked = null;
+
 
     public function __construct()
     {
@@ -142,6 +145,18 @@ class Tourney
         if ($this->matchResults->removeElement($matchResult) && $matchResult->getTourney() === $this) {
             $matchResult->setTourney(null);
         }
+
+        return $this;
+    }
+
+    public function isIsRanked(): ?bool
+    {
+        return $this->is_ranked;
+    }
+
+    public function setIsRanked(bool $is_ranked): self
+    {
+        $this->is_ranked = $is_ranked;
 
         return $this;
     }
