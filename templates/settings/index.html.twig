@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Настройки{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    {% if user.challongeConnected %}
+
+        <div class="container">
+            <a class="btn challonge-btn-primary" href="{{ path('app_auth_challonge') }}">
+                <img class="challonge-icon" src="{{ asset('assets/white_challonge.svg') }}" height="25" width="25"/>
+                <span class="ms-2">Подключить Challonge</span>
+            </a>
+        </div>
+
+    {% else %}
+
+        <div class="container">
+            <a class="btn challonge-btn-connected" href="{{ path('app_auth_challonge_disconnect') }}">
+                <img class="challonge-icon" src="{{ asset('assets/colored_challonge.svg') }}" height="25" width="25"/>
+                <span class="ms-2">Отключить Challonge</span>
+            </a>
+        </div>
+
+    {% endif %}
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}

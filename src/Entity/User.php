@@ -303,4 +303,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function isChallongeConnected(): bool
+    {
+        return $this->getChallongeToken() === null;
+    }
 }

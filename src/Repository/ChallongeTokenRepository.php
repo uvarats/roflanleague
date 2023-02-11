@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\ChallongeToken;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -37,6 +38,16 @@ class ChallongeTokenRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getTokenByUser(User $user): ChallongeToken
+    {
+        return $this->createQueryBuilder('token')
+            ->leftJoin('token.relatedUser', 'user')
+            ->where('token.relatedUser = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getSingleResult();
     }
 
 //    /**
