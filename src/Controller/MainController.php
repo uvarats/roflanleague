@@ -3,8 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Service\Challonge\ChallongeOAuthService;
-use App\Service\ChallongeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +18,8 @@ class MainController extends AbstractController
     }
 
     #[Route('/', name: 'app_main')]
-    public function index(ChallongeOAuthService $challongeOAuth): Response
+    public function index(): Response
     {
-        dd($challongeOAuth->getAuthUrl());
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
         ]);

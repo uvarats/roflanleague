@@ -39,6 +39,6 @@ class ChallongeController extends AbstractController
         $this->entityManager->flush();
 
         $this->addFlash('success', 'Аккаунт Challonge успешно привязан!');
-        return $this->redirectToRoute('app_profile');
+        return $this->redirectToRoute('app_settings');
     }
 }

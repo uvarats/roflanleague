@@ -127,19 +127,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function getFullUser(int $id): User
     {
-        $em = $this->getEntityManager();
-        /** @var User $user */
-        $user = $this->createQueryBuilder('user')
-            ->select('user')
+        return $this->createQueryBuilder('user')
             ->leftJoin('user.badges', 'badges')
             ->addSelect('badges')
             ->leftJoin('user.tourneys', 'tourneys')
             ->addSelect('tourneys')
+            ->leftJoin('user.challongeToken', 'challongeToken')
+            ->addSelect('challongeToken')
             ->where('user.id = :id')
             ->setParameter('id', $id)
             ->getQuery()
             ->getSingleResult();
-        return $user;
     }
 
 //    /**

@@ -101,8 +101,7 @@ readonly class ChallongeOAuthService
         return $challongeToken;
     }
 
-    private function requestRefreshToken()
-    {
+    public function refreshToken(ChallongeToken $challongeToken) {
 
     }
 }
