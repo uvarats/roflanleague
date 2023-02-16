@@ -14,3 +14,11 @@
     border-color: #FF7324;
     color: #FF7324;
 }
+
+.btn.challonge-btn-primary:hover .white-challonge-icon {
+    fill: #FF7324;
+}
+
+.btn.challonge-btn-connected:hover .colored-challonge-icon {
+    fill: #fff;
+}

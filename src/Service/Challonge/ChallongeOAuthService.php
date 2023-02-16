@@ -7,15 +7,14 @@ namespace App\Service\Challonge;
 use App\Dto\ChallongeCodeDTO;
 use App\Entity\ChallongeToken;
 use App\Entity\User;
-use App\Service\Challonge\Dto\ChallongeAuthUrlDto;
 use App\Service\Challonge\Dto\ChallongeTokenDto;
+use App\Service\Challonge\Dto\RefreshTokenRequestDto;
 use App\Service\Challonge\Dto\TokenRequestDto;
 use App\Service\Challonge\Factory\AuthSettingsFactory;
 use App\Service\Interface\Arrayable;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Http\Client\ClientExceptionInterface;
-use Symfony\Component\HttpClient\Exception\ClientException;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Contracts\HttpClient\ResponseInterface;
 
 readonly class ChallongeOAuthService
 {
@@ -25,8 +24,8 @@ readonly class ChallongeOAuthService
     private string $tokenUrl;
 
     public function __construct(
-        private HttpClientInterface $client,
-        private AuthSettingsFactory $settingsFactory,
+        private HttpClientInterface    $client,
+        private AuthSettingsFactory    $settingsFactory,
         private EntityManagerInterface $entityManager,
     )
     {
@@ -71,16 +70,28 @@ readonly class ChallongeOAuthService
     {
         $tokenRequestData = TokenRequestDto::fromCode($challongeCode);
 
-        $response = $this->client->request(
-            'POST',
-            $this->tokenUrl,
-            [
-                'headers' => [
-                    'Content-Type' => 'application/x-www-form-urlencoded',
-                ],
-                'body' => $tokenRequestData->toArray(),
-            ]
-        );
+        $response = $this->request($this->tokenUrl, $tokenRequestData);
+
+        return ChallongeTokenDto::fromJson($response->getContent());
+    }
+
+    public function refreshToken(ChallongeToken $challongeToken)
+    {
+        $refreshToken = $challongeToken->getRefreshToken();
+        $tokenDto = $this->refreshTokenRequest($refreshToken);
+
+        $token = $this->updateModelFromDto($challongeToken, $tokenDto);
+
+        $this->entityManager->flush();
+
+        return $token;
+    }
+
+    private function refreshTokenRequest(string $refreshToken)
+    {
+        $refreshTokenRequest = RefreshTokenRequestDto::from($refreshToken);
+
+        $response = $this->request($this->tokenUrl, $refreshTokenRequest);
 
         return ChallongeTokenDto::fromJson($response->getContent());
     }
@@ -88,20 +99,36 @@ readonly class ChallongeOAuthService
     private function createModel(ChallongeTokenDto $tokenDto, User $user): ChallongeToken
     {
         $challongeToken = new ChallongeToken();
+        $challongeToken->setRelatedUser($user);
 
-        $tokenExpiresAtTimestamp = $tokenDto->expires_in + $tokenDto->created_at;
-        $expiresAt = new \DateTimeImmutable();
-        $expiresAt->setTimestamp($tokenExpiresAtTimestamp);
-
-        $challongeToken->setAccessToken($tokenDto->access_token)
-            ->setRefreshToken($tokenDto->refresh_token)
-            ->setRelatedUser($user)
-            ->setAccessTokenExpiresAt($expiresAt);
-
-        return $challongeToken;
+        return $this->updateModelFromDto($challongeToken, $tokenDto);
     }
 
-    public function refreshToken(ChallongeToken $challongeToken) {
+    private function updateModelFromDto(
+        ChallongeToken    $challongeToken,
+        ChallongeTokenDto $tokenDto
+    ): ChallongeToken
+    {
+        $tokenExpiresAtTimestamp = $tokenDto->expires_in + $tokenDto->created_at;
+        $expiresAt = new \DateTimeImmutable();
+        $expiresAt = $expiresAt->setTimestamp($tokenExpiresAtTimestamp);
 
+        return $challongeToken->setAccessToken($tokenDto->access_token)
+            ->setRefreshToken($tokenDto->refresh_token)
+            ->setAccessTokenExpiresAt($expiresAt);
+    }
+
+    private function request(string $url, Arrayable $data, string $method = 'POST'): ResponseInterface
+    {
+        return $this->client->request(
+            $method,
+            $url,
+            [
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+                'body' => $data->toArray(),
+            ]
+        );
     }
 }

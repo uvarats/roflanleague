@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'participant', targetEntity: UserRating::class, orphanRemoval: true)]
     private Collection $userRatings;
 
-    #[ORM\OneToOne(mappedBy: 'relatedUser', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'relatedUser', cascade: ['persist'], fetch: 'EAGER')]
     private ?ChallongeToken $challongeToken = null;
 
 

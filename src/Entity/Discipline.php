@@ -24,9 +24,13 @@ class Discipline
     #[ORM\OneToMany(mappedBy: 'discipline', targetEntity: UserRating::class)]
     private Collection $userRatings;
 
+    #[ORM\OneToMany(mappedBy: 'discipline', targetEntity: Tourney::class)]
+    private Collection $tourneys;
+
     public function __construct()
     {
         $this->userRatings = new ArrayCollection();
+        $this->tourneys = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -82,6 +86,36 @@ class Discipline
             // set the owning side to null (unless already changed)
             if ($userRating->getDiscipline() === $this) {
                 $userRating->setDiscipline(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tourney>
+     */
+    public function getTourneys(): Collection
+    {
+        return $this->tourneys;
+    }
+
+    public function addTourney(Tourney $tourney): self
+    {
+        if (!$this->tourneys->contains($tourney)) {
+            $this->tourneys->add($tourney);
+            $tourney->setDiscipline($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTourney(Tourney $tourney): self
+    {
+        if ($this->tourneys->removeElement($tourney)) {
+            // set the owning side to null (unless already changed)
+            if ($tourney->getDiscipline() === $this) {
+                $tourney->setDiscipline(null);
             }
         }
 

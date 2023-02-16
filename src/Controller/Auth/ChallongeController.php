@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 class ChallongeController extends AbstractController
 {
     public function __construct(
-        private readonly ChallongeOAuthService $challongeOAuth,
+        private readonly ChallongeOAuthService  $challongeOAuth,
         private readonly EntityManagerInterface $entityManager,
     )
     {
@@ -40,7 +40,7 @@ class ChallongeController extends AbstractController
 
     #[Route('/auth/challonge/disconnect', name: 'app_auth_challonge_disconnect')]
     public function disconnect(
-        #[CurrentUser] User $user,
+        #[CurrentUser] User      $user,
         ChallongeTokenRepository $tokenRepository
     ): RedirectResponse
     {
