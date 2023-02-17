@@ -21,7 +21,7 @@ final class Version20230209203422 extends AbstractMigration
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE challonge_token ADD access_token_expires_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL');
-        $this->addSql('COMMENT ON COLUMN challonge_token.access_token_expires_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql("COMMENT ON COLUMN challonge_token.access_token_expires_at IS '(DC2Type:datetime_immutable)'");
     }
 
     public function down(Schema $schema): void

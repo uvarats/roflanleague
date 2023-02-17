@@ -7,9 +7,9 @@ namespace App\Service\Challonge;
 use App\Dto\ChallongeCodeDTO;
 use App\Entity\ChallongeToken;
 use App\Entity\User;
-use App\Service\Challonge\Dto\ChallongeTokenDto;
-use App\Service\Challonge\Dto\RefreshTokenRequestDto;
-use App\Service\Challonge\Dto\TokenRequestDto;
+use App\Service\Challonge\Dto\Auth\ChallongeTokenDto;
+use App\Service\Challonge\Dto\Auth\RefreshTokenRequestDto;
+use App\Service\Challonge\Dto\Auth\TokenRequestDto;
 use App\Service\Challonge\Factory\AuthSettingsFactory;
 use App\Service\Interface\Arrayable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,9 +18,13 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 
 readonly class ChallongeOAuthService
 {
+    /**
+     * @var string
+     */
     public const DOMAIN = 'challonge.com';
 
     private string $oauthUrl;
+
     private string $tokenUrl;
 
     public function __construct(
@@ -30,9 +34,10 @@ readonly class ChallongeOAuthService
     )
     {
         $domain = self::DOMAIN;
-        $oauthUrl = "https://api.{$domain}/oauth";
-        $this->oauthUrl = "{$oauthUrl}/authorize";
-        $this->tokenUrl = "{$oauthUrl}/token";
+        $oauthUrl = sprintf('https://api.%s/oauth', $domain);
+        $this->oauthUrl = sprintf('%s/authorize', $oauthUrl);
+
+        $this->tokenUrl = sprintf('%s/token', $oauthUrl);
     }
 
     public function getAuthUrl(): string
@@ -75,7 +80,14 @@ readonly class ChallongeOAuthService
         return ChallongeTokenDto::fromJson($response->getContent());
     }
 
-    public function refreshToken(ChallongeToken $challongeToken)
+    public function refreshTokenIfExpired(ChallongeToken $challongeToken): void
+    {
+        if ($challongeToken->isAccessTokenExpired()) {
+            $this->refreshToken($challongeToken);
+        }
+    }
+
+    public function refreshToken(ChallongeToken $challongeToken): ChallongeToken
     {
         $refreshToken = $challongeToken->getRefreshToken();
         $tokenDto = $this->refreshTokenRequest($refreshToken);
@@ -87,7 +99,7 @@ readonly class ChallongeOAuthService
         return $token;
     }
 
-    private function refreshTokenRequest(string $refreshToken)
+    private function refreshTokenRequest(string $refreshToken): ChallongeTokenDto
     {
         $refreshTokenRequest = RefreshTokenRequestDto::from($refreshToken);
 

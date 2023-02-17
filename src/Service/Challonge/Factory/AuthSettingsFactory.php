@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service\Challonge\Factory;
 
-use App\Service\Challonge\Dto\ChallongeAuthUrlDto;
+use App\Service\Challonge\Dto\Auth\ChallongeAuthUrlDto;
 
 class AuthSettingsFactory
 {
+    /**
+     * @var string[]
+     */
     public const REQUESTED_SCOPES = [
         'me',
         'tournaments:read',

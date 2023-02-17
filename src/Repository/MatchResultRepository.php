@@ -49,6 +49,7 @@ class MatchResultRepository extends ServiceEntityRepository
             ->orWhere(':user = result.awayPlayer')
             ->setParameter('user', $user);
     }
+
     public function getUserMatches(User $user): Query
     {
         return $this->userMatches($user)

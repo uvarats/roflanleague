@@ -82,11 +82,9 @@ class Discipline
 
     public function removeUserRating(UserRating $userRating): self
     {
-        if ($this->userRatings->removeElement($userRating)) {
-            // set the owning side to null (unless already changed)
-            if ($userRating->getDiscipline() === $this) {
-                $userRating->setDiscipline(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->userRatings->removeElement($userRating) && $userRating->getDiscipline() === $this) {
+            $userRating->setDiscipline(null);
         }
 
         return $this;
@@ -112,11 +110,9 @@ class Discipline
 
     public function removeTourney(Tourney $tourney): self
     {
-        if ($this->tourneys->removeElement($tourney)) {
-            // set the owning side to null (unless already changed)
-            if ($tourney->getDiscipline() === $this) {
-                $tourney->setDiscipline(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->tourneys->removeElement($tourney) && $tourney->getDiscipline() === $this) {
+            $tourney->setDiscipline(null);
         }
 
         return $this;

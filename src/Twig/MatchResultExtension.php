@@ -15,9 +15,15 @@ class MatchResultExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('opponent', [$this, 'getOpponent']),
-            new TwigFilter('result', [$this, 'getResultForUser']),
-            new TwigFilter('form', [$this, 'getForm']),
+            new TwigFilter('opponent', function (\App\Entity\MatchResult $matchResult, \App\Entity\User $user) : ?\App\Entity\User {
+                return $this->getOpponent($matchResult, $user);
+            }),
+            new TwigFilter('result', function (\App\Entity\MatchResult $matchResult, \App\Entity\User $user) : string {
+                return $this->getResultForUser($matchResult, $user);
+            }),
+            new TwigFilter('form', function (array $results, \App\Entity\User $user) : ?string {
+                return $this->getForm($results, $user);
+            }),
         ];
     }
 

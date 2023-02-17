@@ -36,12 +36,12 @@ final class Version20230209184305 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_B2053812E7328C9B ON match_result (home_player_id)');
         $this->addSql('CREATE INDEX IDX_B20538126861DE1 ON match_result (away_player_id)');
         $this->addSql('CREATE INDEX IDX_B2053812ECAE3834 ON match_result (tourney_id)');
-        $this->addSql('COMMENT ON COLUMN match_result.finished_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql("COMMENT ON COLUMN match_result.finished_at IS '(DC2Type:datetime_immutable)'");
         $this->addSql('CREATE TABLE reset_password_request (id INT NOT NULL, user_id INT NOT NULL, selector VARCHAR(20) NOT NULL, hashed_token VARCHAR(100) NOT NULL, requested_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, expires_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_7CE748AA76ED395 ON reset_password_request (user_id)');
-        $this->addSql('COMMENT ON COLUMN reset_password_request.requested_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('COMMENT ON COLUMN reset_password_request.expires_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('CREATE TABLE tourney (id INT NOT NULL, name VARCHAR(30) NOT NULL, impact_coefficient DOUBLE PRECISION NOT NULL, challonge_url VARCHAR(255) NOT NULL, state VARCHAR(75) DEFAULT \'new\' NOT NULL, is_ranked BOOLEAN NOT NULL, PRIMARY KEY(id))');
+        $this->addSql("COMMENT ON COLUMN reset_password_request.requested_at IS '(DC2Type:datetime_immutable)'");
+        $this->addSql("COMMENT ON COLUMN reset_password_request.expires_at IS '(DC2Type:datetime_immutable)'");
+        $this->addSql("CREATE TABLE tourney (id INT NOT NULL, name VARCHAR(30) NOT NULL, impact_coefficient DOUBLE PRECISION NOT NULL, challonge_url VARCHAR(255) NOT NULL, state VARCHAR(75) DEFAULT 'new' NOT NULL, is_ranked BOOLEAN NOT NULL, PRIMARY KEY(id))");
         $this->addSql('CREATE UNIQUE INDEX UNIQ_FFF721315E237E06 ON tourney (name)');
         $this->addSql('CREATE TABLE tourney_user (tourney_id INT NOT NULL, user_id INT NOT NULL, PRIMARY KEY(tourney_id, user_id))');
         $this->addSql('CREATE INDEX IDX_77D66718ECAE3834 ON tourney_user (tourney_id)');
@@ -52,8 +52,8 @@ final class Version20230209184305 extends AbstractMigration
         $this->addSql('CREATE TABLE user_rating (id INT NOT NULL, participant_id INT NOT NULL, discipline_id INT DEFAULT NULL, value INT NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, updated_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_BDDB3D1F9D1C3019 ON user_rating (participant_id)');
         $this->addSql('CREATE INDEX IDX_BDDB3D1FA5522701 ON user_rating (discipline_id)');
-        $this->addSql('COMMENT ON COLUMN user_rating.created_at IS \'(DC2Type:datetime_immutable)\'');
-        $this->addSql('COMMENT ON COLUMN user_rating.updated_at IS \'(DC2Type:datetime_immutable)\'');
+        $this->addSql("COMMENT ON COLUMN user_rating.created_at IS '(DC2Type:datetime_immutable)'");
+        $this->addSql("COMMENT ON COLUMN user_rating.updated_at IS '(DC2Type:datetime_immutable)'");
         $this->addSql('CREATE TABLE messenger_messages (id BIGSERIAL NOT NULL, body TEXT NOT NULL, headers TEXT NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, available_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, delivered_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_75EA56E0FB7336F0 ON messenger_messages (queue_name)');
         $this->addSql('CREATE INDEX IDX_75EA56E0E3BD61CE ON messenger_messages (available_at)');

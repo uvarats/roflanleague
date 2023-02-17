@@ -16,7 +16,7 @@ class InvalidMatchResultException extends \LogicException
         $resultEnum = $result->getResult();
         $message = "Invalid match result!";
 
-        if ($resultEnum === Result::CANCELED || $resultEnum === null) {
+        if ($resultEnum === Result::CANCELED || !$resultEnum instanceof \App\Entity\Enum\Result) {
             $message = "Result cannot be cancelled or null!";
         }
 

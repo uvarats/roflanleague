@@ -61,6 +61,7 @@ class BadgeAdminController extends AbstractController
                     "success" => true,
                 ]);
             }
+
             $errorMsg = "Badge object not found by this id";
         }
 
