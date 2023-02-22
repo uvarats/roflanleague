@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
+{% set title = 'Подключение существующего турнира' %}
 
-{% block title %}Подключение существующего турнира{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
 
@@ -14,34 +15,13 @@
             {{ form_start(tourneyForm) }}
 
             <div class="form-floating mb-3">
-                {{ form_widget(tourneyForm.name, {
+                {{ form_widget(tourneyForm.challongeTourneyUrl, {
                     'attr': {
                         'class': 'form-control',
-                        'placeholder': 'Название'
+                        'placeholder': 'ID турнира на платформе Challonge'
                     }
                 }) }}
-                {{ form_label(tourneyForm.name) }}
-            </div>
-
-            {# TODO: make tourney linking #}
-            <div class="form-floating mb-3">
-                {{ form_widget(tourneyForm.type, {
-                    'attr': {
-                        'class': 'form-control',
-                        'placeholder': 'Тип турнира'
-                    }
-                }) }}
-                {{ form_label(tourneyForm.type) }}
-            </div>
-
-            <div class="form-floating mb-3">
-                {{ form_widget(tourneyForm.impactCoefficient, {
-                    'attr': {
-                        'class': 'form-control',
-                        'placeholder': 'Коэф. важности'
-                    }
-                }) }}
-                {{ form_label(tourneyForm.impactCoefficient) }}
+                {{ form_label(tourneyForm.challongeTourneyUrl) }}
             </div>
 
             <div>

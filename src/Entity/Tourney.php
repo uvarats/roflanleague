@@ -39,6 +39,9 @@ class Tourney
     #[ORM\ManyToOne(inversedBy: 'tourneys')]
     private ?Discipline $discipline = null;
 
+    #[ORM\OneToOne(mappedBy: 'tourney', cascade: ['persist', 'remove'])]
+    private ?TourneyInvite $invite = null;
+
 
     public function __construct()
     {
@@ -172,6 +175,23 @@ class Tourney
     public function setDiscipline(?Discipline $discipline): self
     {
         $this->discipline = $discipline;
+
+        return $this;
+    }
+
+    public function getInvite(): ?TourneyInvite
+    {
+        return $this->invite;
+    }
+
+    public function setInvite(TourneyInvite $invite): self
+    {
+        // set the owning side of the relation if necessary
+        if ($invite->getTourney() !== $this) {
+            $invite->setTourney($this);
+        }
+
+        $this->invite = $invite;
 
         return $this;
     }

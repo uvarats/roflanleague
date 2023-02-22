@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\ExistingTourney;
 use App\Entity\Enum\ParticipantAction;
 use App\Entity\Enum\TournamentType;
 use App\Entity\Enum\TourneyState;
 use App\Entity\MatchResult;
 use App\Entity\Tourney;
 use App\Entity\User;
+use App\Form\ExistingTourneyType;
 use App\Form\TourneyType;
 use App\Service\ChallongeService;
+use App\Service\Factory\TourneyFactory;
 use App\Service\TourneyService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,7 +30,6 @@ class TourneyAdminController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly ChallongeService       $challonge,
-        private readonly TourneyService         $tourneyService
     )
     {
 
@@ -55,6 +57,7 @@ class TourneyAdminController extends AbstractController
 
             $tourney->setChallongeUrl($challongeTourney->url);
 
+            /** Где-то здесь баг, после прошлых тестов турнир не сохранялся */
             $this->em->persist($tourney);
             try {
                 $this->em->flush();
@@ -73,8 +76,20 @@ class TourneyAdminController extends AbstractController
     }
 
     #[Route('/tourneys/link', name: 'app_tourney_link')]
-    public function linkExistingTourney() {
-        // TODO: make tourney linking
+    public function linkExistingTourney(Request $request, TourneyFactory $tourneyFactory): Response
+    {
+        $existingTourney = new ExistingTourney();
+        $form = $this->createForm(ExistingTourneyType::class, $existingTourney);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $tourney = $tourneyFactory->createFromChallonge($existingTourney);
+        }
+
+        return $this->render('admin/tourney/tourney_link.html.twig', [
+            'tourneyForm' => $form,
+        ]);
     }
 
     #[Route('/tourney/{id}/edit', name: 'app_tourney_edit')]
