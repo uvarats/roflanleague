@@ -20,7 +20,7 @@ class ChallongeToken
     #[ORM\Column(type: Types::TEXT)]
     private ?string $refreshToken = null;
 
-    #[ORM\OneToOne(inversedBy: 'challongeToken', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'challongeToken', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $relatedUser = null;
 
@@ -61,7 +61,7 @@ class ChallongeToken
         return $this->relatedUser;
     }
 
-    public function setRelatedUser(User $relatedUser): self
+    public function setRelatedUser(?User $relatedUser): self
     {
         $this->relatedUser = $relatedUser;
 
@@ -78,5 +78,12 @@ class ChallongeToken
         $this->accessTokenExpiresAt = $accessTokenExpiresAt;
 
         return $this;
+    }
+
+    public function isAccessTokenExpired(): bool
+    {
+        $now = new \DateTimeImmutable();
+
+        return $now > $this->accessTokenExpiresAt;
     }
 }

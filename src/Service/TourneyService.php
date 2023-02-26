@@ -84,19 +84,16 @@ class TourneyService
 
     private function applyDifferences(array $participants, array $differences): void
     {
-        for ($i = 0; $i < count($participants); $i++) {
+        foreach ($participants as $i => $participant) {
             /** @var User $participant */
-            $participant = $participants[$i];
+            $participant = $participant;
             /** @var float $ratingDifference */
             $ratingDifference = $differences[$i];
-
             $currentRating = $participant->getRating();
             $newRating = $currentRating + $ratingDifference;
-
             if ($newRating < 10) {
                 $newRating = 10;
             }
-
             $participant->setRating((int)round($newRating));
         }
     }

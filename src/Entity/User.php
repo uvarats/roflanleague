@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'participant', targetEntity: UserRating::class, orphanRemoval: true)]
     private Collection $userRatings;
 
-    #[ORM\OneToOne(mappedBy: 'relatedUser', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'relatedUser', cascade: ['persist'], fetch: 'EAGER')]
     private ?ChallongeToken $challongeToken = null;
 
 
@@ -277,11 +277,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function removeUserRating(UserRating $userRating): self
     {
-        if ($this->userRatings->removeElement($userRating)) {
-            // set the owning side to null (unless already changed)
-            if ($userRating->getParticipant() === $this) {
-                $userRating->setParticipant(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->userRatings->removeElement($userRating) && $userRating->getParticipant() === $this) {
+            $userRating->setParticipant(null);
         }
 
         return $this;

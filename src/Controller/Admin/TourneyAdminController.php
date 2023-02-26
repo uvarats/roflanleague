@@ -129,6 +129,7 @@ class TourneyAdminController extends AbstractController
         foreach ($tourneyResults as $tourneyResult) {
             $this->em->remove($tourneyResult);
         }
+
         $this->em->flush();
 
         return $this->json(['message' => 'Турнир успешно сброшен!']);
@@ -221,6 +222,7 @@ class TourneyAdminController extends AbstractController
                     'success' => true,
                 ]);
             }
+
             return $this->json([
                 'error' => 'User with this id does not exists!',
             ]);

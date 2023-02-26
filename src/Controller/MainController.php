@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\Challonge\ChallongeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,8 +19,10 @@ class MainController extends AbstractController
     }
 
     #[Route('/', name: 'app_main')]
-    public function index(): Response
+    public function index(ChallongeService $challonge): Response
     {
+        $t = $challonge->getTournament('roflanleague');
+        dd($t);
         return $this->render('main/index.html.twig', [
             'controller_name' => 'MainController',
         ]);

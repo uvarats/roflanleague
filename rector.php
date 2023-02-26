@@ -19,8 +19,12 @@ return static function (RectorConfig $rectorConfig): void {
     //$rectorConfig->rule(InlineConstructorDefaultToPropertyRector::class);
 
     // define sets of rules
-        $rectorConfig->sets([
-            \Rector\Set\ValueObject\SetList::CODE_QUALITY,
-            \Rector\Set\ValueObject\SetList::CODING_STYLE
-        ]);
+//        $rectorConfig->sets([
+//            \Rector\Set\ValueObject\SetList::CODE_QUALITY,
+//            \Rector\Set\ValueObject\SetList::CODING_STYLE
+//        ]);
+
+    $rectorConfig->sets([
+        \Rector\Set\ValueObject\SetList::PHP_82
+    ]);
 };

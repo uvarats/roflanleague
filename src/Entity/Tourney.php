@@ -36,6 +36,9 @@ class Tourney
     #[ORM\Column]
     private ?bool $is_ranked = null;
 
+    #[ORM\ManyToOne(inversedBy: 'tourneys')]
+    private ?Discipline $discipline = null;
+
 
     public function __construct()
     {
@@ -157,6 +160,18 @@ class Tourney
     public function setIsRanked(bool $is_ranked): self
     {
         $this->is_ranked = $is_ranked;
+
+        return $this;
+    }
+
+    public function getDiscipline(): ?Discipline
+    {
+        return $this->discipline;
+    }
+
+    public function setDiscipline(?Discipline $discipline): self
+    {
+        $this->discipline = $discipline;
 
         return $this;
     }

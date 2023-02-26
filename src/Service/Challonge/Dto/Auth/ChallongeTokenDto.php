@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Challonge\Dto;
+namespace App\Service\Challonge\Dto\Auth;
 
 final readonly class ChallongeTokenDto
 {

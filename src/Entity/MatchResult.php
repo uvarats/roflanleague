@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: MatchResultRepository::class)]
 class MatchResult
 {
+    public $homePlayerRatingChange;
+    public $awayPlayerRatingChange;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]

@@ -62,6 +62,7 @@ class AdminController extends AbstractController
                 'newStatus' => !$userStatus,
             ]);
         }
+
         return $this->json([
             'error' => 'User not found',
         ]);
@@ -78,6 +79,7 @@ class AdminController extends AbstractController
                 'success' => true,
             ]);
         }
+
         return $this->json([
             'error' => 'User not found',
         ]);
@@ -124,6 +126,7 @@ class AdminController extends AbstractController
                 'success' => true,
             ]);
         }
+
         return $this->json([
             'error' => 'Badge was not found',
         ]);
