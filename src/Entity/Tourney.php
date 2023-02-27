@@ -34,7 +34,7 @@ class Tourney
     private Collection $matchResults;
 
     #[ORM\Column]
-    private ?bool $is_ranked = null;
+    private bool $is_ranked = false;
 
     #[ORM\ManyToOne(inversedBy: 'tourneys')]
     private ?Discipline $discipline = null;

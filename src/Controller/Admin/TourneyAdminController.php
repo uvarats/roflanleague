@@ -45,25 +45,14 @@ class TourneyAdminController extends AbstractController
     }
 
     #[Route('/tourneys/add', name: 'app_tourney_add')]
-    public function newTourney(Request $request): RedirectResponse|Response
+    public function newTourney(Request $request, TourneyService $tourneyService): RedirectResponse|Response
     {
         $tourney = new Tourney();
         $form = $this->createForm(TourneyType::class, $tourney);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $challongeTourney = $this->challonge
-                ->createTournament($tourney->getName(), $form->get('type')->getNormData());
-
-            $tourney->setChallongeUrl($challongeTourney->url);
-
-            /** Где-то здесь баг, после прошлых тестов турнир не сохранялся */
-            $this->em->persist($tourney);
-            try {
-                $this->em->flush();
-            } catch (\Throwable $throwable) {
-                $this->challonge->removeTournament($challongeTourney->url);
-            }
+            $tourneyService->createTourney($tourney, $form);
 
             return $this->redirectToRoute('app_admin_tourneys');
         }

@@ -17,6 +17,10 @@ use Reflex\Challonge\DTO\MatchDto;
 use Reflex\Challonge\DTO\Participant;
 use Reflex\Challonge\DTO\Tournament;
 
+/**
+ * Soon will be deprecated.
+ * Challonge API v2 in dev.
+ */
 class ChallongeService
 {
     private Challonge $challonge;

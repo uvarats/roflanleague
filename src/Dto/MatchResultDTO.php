@@ -4,21 +4,23 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Dto\Interface\JsonDTOInterface;
+use App\Dto\Base\Data;
 
-class MatchResultDTO implements JsonDTOInterface
+/**
+ * TODO: check this with new json mapper. Test match result setting.
+ */
+class MatchResultDTO extends Data
 {
-    public ?int $matchId = null;
+    public function __construct(
+        public readonly ?int    $matchId = null,
+        public readonly ?int    $tourneyId = null,
+        public readonly ?int    $homePlayerId = null,
+        public readonly ?int    $awayPlayerId = null,
+        public readonly ?float  $homePlayerOdds = null,
+        public readonly ?float  $awayPlayerOdds = null,
+        public readonly ?string $result = null,
+    )
+    {
 
-    public ?int $tourneyId = null;
-
-    public ?int $homePlayerId = null;
-
-    public ?int $awayPlayerId = null;
-
-    public ?float $homePlayerOdds = null;
-
-    public ?float $awayPlayerOdds = null;
-
-    public ?string $result = null;
+    }
 }
