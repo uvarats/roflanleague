@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Discipline{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="ms-1">
+            <h1>Дисциплина</h1>
+        </div>
+
+        <table class="table">
+            <tbody>
+            <tr>
+                <th>ID</th>
+                <td>{{ discipline.id }}</td>
+            </tr>
+            <tr>
+                <th>Название</th>
+                <td>{{ discipline.name }}</td>
+            </tr>
+            <tr>
+                <th>Тип (сфера)</th>
+                <td>{{ discipline.type.value }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex flex-column" id="action-buttons">
+            <div class="d-flex flex-row mb-2">
+                <a class="btn btn-primary w-50" href="{{ path('app_admin_discipline_index') }}">К листингу</a>
+
+                <a class="btn btn-primary w-50 ms-2" href="{{ path('app_discipline_admin_edit', {'id': discipline.id}) }}">Редактировать</a>
+            </div>
+
+            <div class="col">
+                {{ include('admin/discipline/_delete_form.html.twig') }}
+            </div>
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+{% endblock %}

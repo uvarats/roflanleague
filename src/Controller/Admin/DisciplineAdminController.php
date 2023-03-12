@@ -13,15 +13,15 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/admin/discipline')]
 class DisciplineAdminController extends AbstractController
 {
-    #[Route('/', name: 'app_discipline_admin_index', methods: ['GET'])]
+    #[Route('', name: 'app_admin_discipline_index', methods: ['GET'])]
     public function index(DisciplineRepository $disciplineRepository): Response
     {
-        return $this->render('discipline_admin/index.html.twig', [
+        return $this->render('admin/discipline/index.html.twig', [
             'disciplines' => $disciplineRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'app_discipline_admin_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'app_admin_discipline_new', methods: ['GET', 'POST'])]
     public function new(Request $request, DisciplineRepository $disciplineRepository): Response
     {
         $discipline = new Discipline();
@@ -31,10 +31,10 @@ class DisciplineAdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $disciplineRepository->save($discipline, true);
 
-            return $this->redirectToRoute('app_discipline_admin_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_admin_discipline_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('discipline_admin/new.html.twig', [
+        return $this->render('admin/discipline/new.html.twig', [
             'discipline' => $discipline,
             'form' => $form,
         ]);
@@ -43,7 +43,7 @@ class DisciplineAdminController extends AbstractController
     #[Route('/{id}', name: 'app_discipline_admin_show', methods: ['GET'])]
     public function show(Discipline $discipline): Response
     {
-        return $this->render('discipline_admin/show.html.twig', [
+        return $this->render('admin/discipline/show.html.twig', [
             'discipline' => $discipline,
         ]);
     }
@@ -57,10 +57,10 @@ class DisciplineAdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $disciplineRepository->save($discipline, true);
 
-            return $this->redirectToRoute('app_discipline_admin_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_admin_discipline_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->renderForm('discipline_admin/edit.html.twig', [
+        return $this->render('admin/discipline/edit.html.twig', [
             'discipline' => $discipline,
             'form' => $form,
         ]);
@@ -73,6 +73,6 @@ class DisciplineAdminController extends AbstractController
             $disciplineRepository->remove($discipline, true);
         }
 
-        return $this->redirectToRoute('app_discipline_admin_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_admin_discipline_index', [], Response::HTTP_SEE_OTHER);
     }
 }

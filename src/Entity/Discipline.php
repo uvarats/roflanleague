@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\DisciplineType;
 use App\Repository\DisciplineRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,7 +20,7 @@ class Discipline
     private ?string $name = null;
 
     #[ORM\Column(length: 30)]
-    private ?string $type = null;
+    private ?DisciplineType $type = null;
 
     #[ORM\OneToMany(mappedBy: 'discipline', targetEntity: UserRating::class)]
     private Collection $userRatings;
@@ -50,12 +51,12 @@ class Discipline
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?DisciplineType
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(DisciplineType $type): self
     {
         $this->type = $type;
 

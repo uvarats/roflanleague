@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Дисциплины{% endblock %}
+
+{% block body %}
+
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex flex-row justify-content-between">
+            <h2>Дисциплины</h2>
+            <div>
+                <a class="btn btn-primary" href="{{ path('app_admin_discipline_new') }}">Создать</a>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Тип</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for discipline in disciplines %}
+                <tr>
+                    <td>{{ discipline.id }}</td>
+                    <td>{{ discipline.name }}</td>
+                    <td>{{ discipline.type.value }}</td>
+                    <td>
+                        <a href="{{ path('app_discipline_admin_show', {'id': discipline.id}) }}">Просмотреть</a>
+                        <a href="{{ path('app_discipline_admin_edit', {'id': discipline.id}) }}">Редактировать</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="4">Дисцилин пока нет, приходите позже.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {{ include('footer.html.twig') }}
+
+{% endblock %}
