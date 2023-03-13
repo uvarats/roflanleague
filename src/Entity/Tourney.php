@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TourneyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TourneyRepository::class)]
@@ -41,6 +42,9 @@ class Tourney
 
     #[ORM\OneToOne(mappedBy: 'tourney', cascade: ['persist', 'remove'])]
     private ?TourneyInvite $invite = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
 
     public function __construct()
@@ -192,6 +196,18 @@ class Tourney
         }
 
         $this->invite = $invite;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

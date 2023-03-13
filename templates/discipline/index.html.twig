@@ -9,9 +9,11 @@
     <div class="container">
         <div class="d-flex flex-row justify-content-between">
             <h2>Дисциплины</h2>
-            <div>
-                <a class="btn btn-primary" href="{{ path('app_admin_discipline_new') }}">Создать</a>
-            </div>
+            {% if is_granted('ROLE_ADMIN') %}
+                <div>
+                    <a class="btn btn-primary" href="{{ path('app_admin_discipline_new') }}">Создать</a>
+                </div>
+            {% endif  %}
         </div>
 
         <table class="table">
@@ -30,8 +32,11 @@
                     <td>{{ discipline.name }}</td>
                     <td>{{ discipline.type.value }}</td>
                     <td>
-                        <a href="{{ path('app_discipline_admin_show', {'id': discipline.id}) }}">Просмотреть</a>
-                        <a href="{{ path('app_discipline_admin_edit', {'id': discipline.id}) }}">Редактировать</a>
+                        <a href="{{ path('app_discipline_tourneys', {'id': discipline.id}) }}">Турниры</a>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_discipline_admin_show', {'id': discipline.id}) }}">Просмотреть</a>
+                            <a href="{{ path('app_discipline_admin_edit', {'id': discipline.id}) }}">Редактировать</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% else %}

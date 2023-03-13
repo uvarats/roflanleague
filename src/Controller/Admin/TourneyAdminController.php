@@ -23,8 +23,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin')]
+#[IsGranted('ROLE_ADMIN')]
 class TourneyAdminController extends AbstractController
 {
     public function __construct(

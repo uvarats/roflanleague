@@ -19,7 +19,8 @@ class TourneyFactory
     {
     }
 
-    public function createFromChallonge(ExistingTourney $existingTourney) {
+    public function createFromChallonge(ExistingTourney $existingTourney)
+    {
         $url = $existingTourney->getChallongeTourneyUrl();
 
         $tourney = $this->findInUserTournaments($url);
@@ -45,10 +46,11 @@ class TourneyFactory
     {
         $tournaments = $this->challonge->getTournaments();
 
-        return $tournaments->first(fn (Tournament $tournament) => $tournament->url === $url);
+        return $tournaments->first(fn(Tournament $tournament) => $tournament->url === $url);
     }
 
-    private function getUsers(string $url) {
+    private function getUsers(string $url)
+    {
         $participants = $this->challonge->getParticipantsByUrl($url);
 
 

@@ -6,6 +6,7 @@ use App\Entity\Enum\DisciplineType;
 use App\Repository\DisciplineRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DisciplineRepository::class)]
@@ -27,6 +28,9 @@ class Discipline
 
     #[ORM\OneToMany(mappedBy: 'discipline', targetEntity: Tourney::class)]
     private Collection $tourneys;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     public function __construct()
     {
@@ -115,6 +119,18 @@ class Discipline
         if ($this->tourneys->removeElement($tourney) && $tourney->getDiscipline() === $this) {
             $tourney->setDiscipline(null);
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

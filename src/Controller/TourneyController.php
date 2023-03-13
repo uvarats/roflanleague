@@ -40,7 +40,7 @@ class TourneyController extends AbstractController
     }
 
     #[Route('/history/{page}', name: 'app_history')]
-    public function history(int $page = 1)
+    public function history(int $page = 1): Response
     {
         $tourneys = $this->em->getRepository(Tourney::class);
         $query = $tourneys->getByStateQuery(TourneyState::ENDED);

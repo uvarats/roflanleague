@@ -17,30 +17,73 @@
                 {{ form_widget(tourneyForm.name, {
                     'attr': {
                         'class': 'form-control',
-                        'placeholder': 'Название'
+                        'placeholder': 1
                     }
                 }) }}
                 {{ form_label(tourneyForm.name) }}
+                <div class="text-danger">
+                    {{ form_errors(tourneyForm.name) }}
+                </div>
+            </div>
+
+            <div class="form-floating mb-3">
+                {{ form_widget(tourneyForm.description, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 1
+                    }
+                }) }}
+                {{ form_label(tourneyForm.description) }}
+                <div class="text-danger">
+                    {{ form_errors(tourneyForm.description) }}
+                </div>
             </div>
 
             <div class="form-floating mb-3">
                 {{ form_widget(tourneyForm.type, {
                     'attr': {
                         'class': 'form-control',
-                        'placeholder': 'Тип турнира'
+                        'placeholder': 1
                     }
                 }) }}
                 {{ form_label(tourneyForm.type) }}
+                <div class="text-danger">
+                    {{ form_errors(tourneyForm.type) }}
+                </div>
             </div>
 
             <div class="form-floating mb-3">
                 {{ form_widget(tourneyForm.impactCoefficient, {
                     'attr': {
                         'class': 'form-control',
-                        'placeholder': 'Коэф. важности'
+                        'placeholder': 1,
                     }
                 }) }}
                 {{ form_label(tourneyForm.impactCoefficient) }}
+                <div class="text-danger">
+                    {{ form_errors(tourneyForm.impactCoefficient) }}
+                </div>
+            </div>
+
+            <div class="form-floating mb-3">
+                {{ form_widget(tourneyForm.discipline, {
+                    'attr': {
+                        'class': 'form-control',
+                        'placeholder': 1,
+                    }
+                }) }}
+                {{ form_label(tourneyForm.discipline) }}
+                <div class="text-danger">
+                    {{ form_errors(tourneyForm.discipline) }}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(tourneyForm.is_ranked) }}
+                {{ form_widget(tourneyForm.is_ranked) }}
+                <div class="text-danger">
+                    {{ form_errors(tourneyForm.is_ranked) }}
+                </div>
             </div>
 
             <div>
