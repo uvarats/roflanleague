@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\ValueResolver;
 
-use App\Dto\Interface\JsonDTOInterface;
+use App\Dto\Base\Data;
+use App\Dto\Base\MapperFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 class DTOResolver implements ValueResolverInterface
 {
@@ -19,20 +17,23 @@ class DTOResolver implements ValueResolverInterface
     {
         $type = $argument->getType();
 
-        if ($type === null || !is_subclass_of($type, JsonDTOInterface::class)) {
+        if ($type === null || !is_subclass_of($type, Data::class)) {
             return [];
         }
 
         $argumentData = $request->request->get($argument->getName());
 
+        if ($argumentData === null) {
+            $argumentData = $request->getContent();
+        }
+
         if (!is_string($argumentData)) {
             return [];
         }
 
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
+        $factory = new MapperFactory();
+        $mapper = $factory->getMapper();
 
-        return [$serializer->deserialize($argumentData, $type, 'json')];
+        return [$mapper->map($argumentData, $type)];
     }
 }

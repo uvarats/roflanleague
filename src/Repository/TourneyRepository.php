@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Discipline;
 use App\Entity\Enum\TourneyState;
 use App\Entity\Tourney;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -56,6 +57,14 @@ class TourneyRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('tourney')
             ->where('tourney.state = :state')
             ->setParameter('state', $state->value)
+            ->getQuery();
+    }
+
+    public function getByDisciplineQuery(Discipline $discipline): Query
+    {
+        return $this->createQueryBuilder('tourney')
+            ->where('tourney.discipline = :discipline')
+            ->setParameter('discipline', $discipline)
             ->getQuery();
     }
 

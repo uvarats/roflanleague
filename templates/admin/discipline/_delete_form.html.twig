@@ -1,0 +1,9 @@
+<div {{ stimulus_controller(
+    'discipline',
+    {
+        'deleteUrl': path('app_discipline_admin_delete', {'id': discipline.id}),
+        'deleteCsrf': csrf_token('delete' ~ discipline.id),
+    }
+)}}>
+    <button class="btn btn-outline-danger w-100" {{ stimulus_action('discipline', 'delete', 'click') }}>Удалить дисциплину</button>
+</div>

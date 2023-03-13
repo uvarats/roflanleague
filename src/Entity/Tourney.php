@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TourneyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TourneyRepository::class)]
@@ -34,10 +35,16 @@ class Tourney
     private Collection $matchResults;
 
     #[ORM\Column]
-    private ?bool $is_ranked = null;
+    private bool $is_ranked = false;
 
     #[ORM\ManyToOne(inversedBy: 'tourneys')]
     private ?Discipline $discipline = null;
+
+    #[ORM\OneToOne(mappedBy: 'tourney', cascade: ['persist', 'remove'])]
+    private ?TourneyInvite $invite = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
 
     public function __construct()
@@ -172,6 +179,35 @@ class Tourney
     public function setDiscipline(?Discipline $discipline): self
     {
         $this->discipline = $discipline;
+
+        return $this;
+    }
+
+    public function getInvite(): ?TourneyInvite
+    {
+        return $this->invite;
+    }
+
+    public function setInvite(TourneyInvite $invite): self
+    {
+        // set the owning side of the relation if necessary
+        if ($invite->getTourney() !== $this) {
+            $invite->setTourney($this);
+        }
+
+        $this->invite = $invite;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin;
 
+use App\Dto\ExistingTourney;
 use App\Entity\Enum\ParticipantAction;
 use App\Entity\Enum\TournamentType;
 use App\Entity\Enum\TourneyState;
 use App\Entity\MatchResult;
 use App\Entity\Tourney;
 use App\Entity\User;
+use App\Form\ExistingTourneyType;
 use App\Form\TourneyType;
 use App\Service\ChallongeService;
+use App\Service\Factory\TourneyFactory;
 use App\Service\TourneyService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,14 +23,15 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin')]
+#[IsGranted('ROLE_ADMIN')]
 class TourneyAdminController extends AbstractController
 {
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly ChallongeService       $challonge,
-        private readonly TourneyService         $tourneyService
     )
     {
 
@@ -43,24 +47,14 @@ class TourneyAdminController extends AbstractController
     }
 
     #[Route('/tourneys/add', name: 'app_tourney_add')]
-    public function newTourney(Request $request): RedirectResponse|Response
+    public function newTourney(Request $request, TourneyService $tourneyService): RedirectResponse|Response
     {
         $tourney = new Tourney();
         $form = $this->createForm(TourneyType::class, $tourney);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $challongeTourney = $this->challonge
-                ->createTournament($tourney->getName(), $form->get('type')->getNormData());
-
-            $tourney->setChallongeUrl($challongeTourney->url);
-
-            $this->em->persist($tourney);
-            try {
-                $this->em->flush();
-            } catch (\Throwable $throwable) {
-                $this->challonge->removeTournament($challongeTourney->url);
-            }
+            $tourneyService->createTourney($tourney, $form);
 
             return $this->redirectToRoute('app_admin_tourneys');
         }
@@ -73,8 +67,20 @@ class TourneyAdminController extends AbstractController
     }
 
     #[Route('/tourneys/link', name: 'app_tourney_link')]
-    public function linkExistingTourney() {
-        // TODO: make tourney linking
+    public function linkExistingTourney(Request $request, TourneyFactory $tourneyFactory): Response
+    {
+        $existingTourney = new ExistingTourney();
+        $form = $this->createForm(ExistingTourneyType::class, $existingTourney);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $tourney = $tourneyFactory->createFromChallonge($existingTourney);
+        }
+
+        return $this->render('admin/tourney/tourney_link.html.twig', [
+            'tourneyForm' => $form,
+        ]);
     }
 
     #[Route('/tourney/{id}/edit', name: 'app_tourney_edit')]

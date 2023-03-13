@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактировать дисциплину{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex flex-column justify-content-center text-center">
+            <h1>Редактирование дисциплины</h1>
+            <a class="btn btn-outline-primary mb-2" href="{{ path('app_admin_discipline_index') }}">К листингу</a>
+            {{ include('admin/discipline/_delete_form.html.twig') }}
+        </div>
+        <hr>
+
+        {{ include('admin/discipline/_form.html.twig', {'button_label': 'Обновить'}) }}
+
+    </div>
+
+    {{ include('footer.html.twig') }}
+{% endblock %}

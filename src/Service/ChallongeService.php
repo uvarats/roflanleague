@@ -12,21 +12,15 @@ use App\Entity\User;
 use App\Exception\InvalidMatchResultException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
-use PHPUnit\Framework\Exception;
 use Reflex\Challonge\Challonge;
 use Reflex\Challonge\DTO\MatchDto;
 use Reflex\Challonge\DTO\Participant;
 use Reflex\Challonge\DTO\Tournament;
-use Reflex\Challonge\Exceptions\AlreadyStartedException;
-use Reflex\Challonge\Exceptions\InvalidFormatException;
-use Reflex\Challonge\Exceptions\NotFoundException;
-use Reflex\Challonge\Exceptions\ServerException;
-use Reflex\Challonge\Exceptions\StillRunningException;
-use Reflex\Challonge\Exceptions\UnauthorizedException;
-use Reflex\Challonge\Exceptions\UnexpectedErrorException;
-use Reflex\Challonge\Exceptions\ValidationException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
+/**
+ * Soon will be deprecated.
+ * Challonge API v2 in dev.
+ */
 class ChallongeService
 {
     private Challonge $challonge;
@@ -40,6 +34,11 @@ class ChallongeService
     public function getChallonge(): Challonge
     {
         return $this->challonge;
+    }
+
+    public function getTournaments(): Collection
+    {
+        return $this->challonge->getTournaments();
     }
 
     public function createTournament(string $name, TournamentType $type): Tournament
@@ -71,9 +70,16 @@ class ChallongeService
         return (bool)$participant->delete();
     }
 
-    public function fetchTournament(Tourney $tourney): Tournament
+    public function fetchTournament(
+        Tourney $tourney,
+    ): Tournament
     {
         return $this->challonge->fetchTournament($tourney->getChallongeUrl());
+    }
+
+    public function fetchTournamentById(string $challongeId): Tournament
+    {
+        return $this->challonge->fetchTournament($challongeId);
     }
 
     public function startTournament(Tourney $tourney): Tournament
@@ -123,6 +129,11 @@ class ChallongeService
     public function getParticipants(Tourney $tourney): Collection
     {
         return $this->challonge->getParticipants($tourney->getChallongeUrl());
+    }
+
+    public function getParticipantsByUrl(string $url): Collection
+    {
+        return $this->challonge->getParticipants($url);
     }
 
     /**

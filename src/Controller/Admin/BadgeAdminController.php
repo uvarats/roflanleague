@@ -11,12 +11,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/admin/badge')]
+#[IsGranted('ROLE_ADMIN')]
 class BadgeAdminController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $em
+        private readonly EntityManagerInterface $em
     )
     {
     }
@@ -86,7 +88,7 @@ class BadgeAdminController extends AbstractController
             return $this->redirectToRoute('app_admin_badges');
         }
 
-        return $this->renderForm('admin/badge/add.html.twig', [
+        return $this->render('admin/badge/add.html.twig', [
             'badgeForm' => $form,
             'pageTitle' => $pageTitle,
         ]);

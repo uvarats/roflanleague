@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Турниры дисциплины {{ discipline.name }}{% endblock %}
+
+{% block body %}
+    {{ include('header.html.twig') }}
+
+    <div class="container">
+        <div class="d-flex flex-row">
+            <h2>Турниры по дисциплине "{{ discipline.name }}"</h2>
+        </div>
+        <div id="description">
+            {{ discipline.description }}
+        </div>
+        <hr>
+
+        {# @var tourney \App\Entity\Tourney #}
+        {% for tourney in tourneys %}
+            {{ include('tourney/_tourney.html.twig', { 'tourney': tourney }) }}
+        {% endfor %}
+
+        <div class="pagination">
+            {{ knp_pagination_render(tourneys, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+        </div>
+    </div>
+
+    {{ include('footer.html.twig') }}
+{% endblock %}

@@ -2,9 +2,11 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\DisciplineType;
 use App\Repository\DisciplineRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DisciplineRepository::class)]
@@ -19,13 +21,16 @@ class Discipline
     private ?string $name = null;
 
     #[ORM\Column(length: 30)]
-    private ?string $type = null;
+    private ?DisciplineType $type = null;
 
     #[ORM\OneToMany(mappedBy: 'discipline', targetEntity: UserRating::class)]
     private Collection $userRatings;
 
     #[ORM\OneToMany(mappedBy: 'discipline', targetEntity: Tourney::class)]
     private Collection $tourneys;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     public function __construct()
     {
@@ -50,12 +55,12 @@ class Discipline
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): ?DisciplineType
     {
         return $this->type;
     }
 
-    public function setType(string $type): self
+    public function setType(DisciplineType $type): self
     {
         $this->type = $type;
 
@@ -114,6 +119,18 @@ class Discipline
         if ($this->tourneys->removeElement($tourney) && $tourney->getDiscipline() === $this) {
             $tourney->setDiscipline(null);
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

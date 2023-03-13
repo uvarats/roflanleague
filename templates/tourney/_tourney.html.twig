@@ -1,0 +1,11 @@
+{# @var tourney \App\Entity\Tourney #}
+<div class="tourney-object">
+    <div class="tourney-object-header d-flex flex-column">
+        <span class="h3">{{ tourney.name }}</span>
+        <span class="mb-3">Участники: {{ tourney.participants.count }}</span>
+        <a class="btn btn-outline-primary" href="{{ path('app_tourney', { id: tourney.id }) }}">
+            Перейти на страницу турнира
+        </a>
+    </div>
+    <hr>
+</div>
