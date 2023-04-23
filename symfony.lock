@@ -64,7 +64,7 @@
         ]
     },
     "nyholm/psr7": {
-        "version": "1.5",
+        "version": "1.7",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
