@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <title>Tourney Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .container {
+            margin: 0 auto;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .logo {
+            float: right;
+            margin-top: 10px;
+            max-width: 150px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .positions {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .positions h2 {
+            margin-bottom: 10px;
+        }
+
+        .positions p {
+            margin-top: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img class="logo" src="{{ asset('assets/logo.svg') }}" alt="League">
+    <h1 class="title">Отчёт о турнире "{{ tourney.name }}"</h1>
+    <p>Описание турнира: {{ tourney.description }}</p>
+    <p>Время проведения: {{ tourneyDates.startDate|date('d-m-Y H:i:s') }}
+        - {{ tourneyDates.endDate|date('d-m-Y H:i:s') }}</p>
+    <p>Организатор: League</p>
+    <div class="positions">
+        <h2>Итоговые позиции</h2>
+        {% for userRank in finalRanks %}
+            <p>{{ userRank.position}} место: {{ userRank.username }}</p>
+        {% endfor %}
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID матча</th>
+            <th>Участник 1</th>
+            <th>Участник 2</th>
+            <th>Победитель</th>
+        </tr>
+        </thead>
+        <tbody>
+        {# @var result \App\Entity\MatchResult #}
+        {% for result in tourney.matchResults %}
+            <tr>
+                <td>{{ result.id }}</td>
+                <td>{{ result.homePlayer.username }}</td>
+                <td>{{ result.awayPlayer.username }}</td>
+                <td>{{ result|winner }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

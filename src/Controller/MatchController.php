@@ -29,6 +29,7 @@ class MatchController extends AbstractController
     }
 
     #[Route('/match/random', name: 'app_match_random')]
+    #[IsGranted('ROLE_ADMIN')]
     public function randomResult(MatchResultDTO $result): JsonResponse
     {
         $this->matchService->randomResult($result);

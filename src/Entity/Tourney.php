@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\TourneyState;
 use App\Repository\TourneyRepository;
+use App\Service\Report\Interface\ReportableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TourneyRepository::class)]
-class Tourney
+class Tourney implements ReportableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -212,4 +214,15 @@ class Tourney
         return $this;
     }
 
+    public function isEnded(): bool
+    {
+        $state = $this->getState();
+
+        return $state === TourneyState::ENDED->value;
+    }
+
+    public function getReportName(): string
+    {
+        return 'tourney_' . $this->getId() . '_report.pdf';
+    }
 }

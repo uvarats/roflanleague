@@ -16,11 +16,11 @@ class UserRating
     #[ORM\Column]
     private ?int $value = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userRatings')]
+    #[ORM\ManyToOne(cascade: ['refresh', 'remove'], inversedBy: 'userRatings')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $participant = null;
 
-    #[ORM\ManyToOne(inversedBy: 'userRatings')]
+    #[ORM\ManyToOne(cascade: ['refresh', 'remove'], inversedBy: 'userRatings')]
     private ?Discipline $discipline = null;
 
     #[ORM\Column]

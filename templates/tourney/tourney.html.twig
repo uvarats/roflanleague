@@ -11,6 +11,9 @@
             <span class="h3">{{ tourney.name }}</span>
             <a class="link-dark text-decoration-none"
                href="https://challonge.com/{{ tourney.challongeUrl }}">{{ tourney.challongeUrl }}</a>
+            <div id="description">
+                <span>{{ tourney.description }}</span>
+            </div>
         </div>
         {% if odds|length > 0 %}
             <div id="matches">

@@ -10,7 +10,7 @@ use App\Exception\Challonge\UserMissingTokenException;
 use App\Service\Challonge\ChallongeOAuthService;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-readonly class TokenService
+final readonly class TokenService
 {
     public function __construct(
         private TokenStorageInterface $tokenStorage,

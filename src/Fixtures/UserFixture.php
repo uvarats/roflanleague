@@ -33,8 +33,6 @@ class UserFixture extends Fixture
         $manager->persist($admin);
 
         $manager->flush();
-
-        $this->addReference();
     }
 
     private function getRandomUser(): User

@@ -6,10 +6,11 @@ namespace App\Entity;
 
 use App\Entity\Enum\Result;
 use App\Repository\MatchResultRepository;
+use App\Service\Report\Interface\ReportableInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MatchResultRepository::class)]
-class MatchResult
+class MatchResult implements ReportableInterface
 {
     public $homePlayerRatingChange;
     public $awayPlayerRatingChange;
@@ -194,5 +195,10 @@ class MatchResult
     public function isLoser(User $user): bool
     {
         return !$this->isWinner($user);
+    }
+
+    public function getReportName(): string
+    {
+        return 'match_' . $this->getId() . '_report.pdf';
     }
 }

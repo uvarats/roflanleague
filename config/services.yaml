@@ -6,6 +6,7 @@
 parameters:
 
 services:
+
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -25,6 +26,11 @@ services:
     App\Service\OddsService:
         arguments:
             - '%env(ODDS_MARGIN_PERCENT)%'
+    App\Service\Report\TourneyReportService: ~
+    App\Service\Provider\PathProvider:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+            $reportsStorage: '%env(resolve:REPORTS_STORAGE_DIR)%'
 
 
     # add more service definitions when explicit configuration is needed

@@ -10,7 +10,7 @@ use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Random\Randomizer;
 
-class MatchService
+final readonly class MatchService
 {
     public function __construct(
         private EntityManagerInterface $em,
