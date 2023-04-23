@@ -13,12 +13,15 @@ class TourneyInvite
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, unique: true)]
     private ?string $slug = null;
 
     #[ORM\OneToOne(inversedBy: 'invite', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Tourney $tourney = null;
+
+    #[ORM\Column]
+    private bool $isActive = true;
 
     public function getId(): ?int
     {
@@ -45,6 +48,18 @@ class TourneyInvite
     public function setTourney(Tourney $tourney): self
     {
         $this->tourney = $tourney;
+
+        return $this;
+    }
+
+    public function isActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }

@@ -32,6 +32,7 @@ class TourneyAdminController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly ChallongeService       $challonge,
+        private readonly TourneyService         $tourneyService
     )
     {
 

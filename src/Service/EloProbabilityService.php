@@ -8,7 +8,7 @@ use App\Dto\OutcomesProbability;
 
 class EloProbabilityService
 {
-    public function calculate(int $firstRating, int $secondRating): OutcomesProbability
+    public function calcsulate(int $firstRating, int $secondRating): OutcomesProbability
     {
         return new OutcomesProbability(
             firstWinProbability: $this->winProbability($firstRating, $secondRating),

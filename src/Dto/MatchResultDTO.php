@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Dto;
 
-use App\Dto\Base\Data;
+
+use Uvarats\Dto\Data;
 
 /**
  * TODO: check this with new json mapper. Test match result setting.
