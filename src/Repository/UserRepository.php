@@ -103,7 +103,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $firstResult = ($page - 1) * $resultsPerPage;
         return $this->createQueryBuilder("user")
-            ->select('user')
+            ->select('user.id', 'user.username', 'user.rating')
             ->where('user.isVerified = true')
             ->andWhere('user.isBanned = false')
             ->orderBy('user.rating', 'DESC')

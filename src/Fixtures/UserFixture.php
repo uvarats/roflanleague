@@ -75,6 +75,8 @@ class UserFixture extends Fixture
 
     public function getDependencies(): array
     {
-        return [];
+        return [
+            BadgeFixture::class
+        ];
     }
 }

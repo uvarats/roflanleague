@@ -48,11 +48,15 @@ class Tourney implements ReportableInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\OneToMany(mappedBy: 'tourney', targetEntity: UserRatingUpdate::class)]
+    private Collection $ratingUpdates;
+
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
         $this->matchResults = new ArrayCollection();
+        $this->ratingUpdates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -224,5 +228,35 @@ class Tourney implements ReportableInterface
     public function getReportName(): string
     {
         return 'tourney_' . $this->getId() . '_report.pdf';
+    }
+
+    /**
+     * @return Collection<int, UserRatingUpdate>
+     */
+    public function getRatingUpdates(): Collection
+    {
+        return $this->ratingUpdates;
+    }
+
+    public function addRatingUpdate(UserRatingUpdate $ratingUpdate): self
+    {
+        if (!$this->ratingUpdates->contains($ratingUpdate)) {
+            $this->ratingUpdates->add($ratingUpdate);
+            $ratingUpdate->setTourney($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRatingUpdate(UserRatingUpdate $ratingUpdate): self
+    {
+        if ($this->ratingUpdates->removeElement($ratingUpdate)) {
+            // set the owning side to null (unless already changed)
+            if ($ratingUpdate->getTourney() === $this) {
+                $ratingUpdate->setTourney(null);
+            }
+        }
+
+        return $this;
     }
 }

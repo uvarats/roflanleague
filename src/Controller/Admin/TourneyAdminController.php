@@ -250,13 +250,7 @@ class TourneyAdminController extends AbstractController
         UserRepository $users
     ): JsonResponse
     {
-        $page = $request->request->get('page');
-
-        if ($page === null) {
-            return new JsonResponse([
-                'error' => 'Page is not provided :/',
-            ]);
-        }
+        $page = (int)$request->request->get('page', 1);
 
         $additionalUsers = $users->getUsersNotInTourney($tourney, $page);
         $result = array_map(static function (User $target) {

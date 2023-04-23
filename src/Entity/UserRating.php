@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRatingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: UserRatingRepository::class)]
@@ -28,6 +30,14 @@ class UserRating
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'rating', targetEntity: UserRatingUpdate::class)]
+    private Collection $ratingUpdates;
+
+    public function __construct()
+    {
+        $this->ratingUpdates = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +100,36 @@ class UserRating
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserRatingUpdate>
+     */
+    public function getRatingUpdates(): Collection
+    {
+        return $this->ratingUpdates;
+    }
+
+    public function addRatingUpdate(UserRatingUpdate $ratingUpdate): self
+    {
+        if (!$this->ratingUpdates->contains($ratingUpdate)) {
+            $this->ratingUpdates->add($ratingUpdate);
+            $ratingUpdate->setRating($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRatingUpdate(UserRatingUpdate $ratingUpdate): self
+    {
+        if ($this->ratingUpdates->removeElement($ratingUpdate)) {
+            // set the owning side to null (unless already changed)
+            if ($ratingUpdate->getRating() === $this) {
+                $ratingUpdate->setRating(null);
+            }
+        }
 
         return $this;
     }

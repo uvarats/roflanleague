@@ -17,6 +17,8 @@ class BadgeFixture extends BaseFixture
             $badge = $this->getRandomBadge();
 
             $manager->persist($badge);
+
+            $this->addReference();
         }
 
         $manager->flush();
@@ -36,4 +38,5 @@ class BadgeFixture extends BaseFixture
 
         return $badge;
     }
+
 }
