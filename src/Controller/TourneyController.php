@@ -21,37 +21,43 @@ class TourneyController extends AbstractController
 
     public function __construct(
         private readonly EntityManagerInterface $em,
-        private readonly ChallongeService       $challonge,
-        private readonly OddsService            $odds,
-        private readonly PaginatorInterface     $paginator
-    )
-    {
+        private readonly ChallongeService $challonge,
+        private readonly OddsService $odds,
+        private readonly PaginatorInterface $paginator
+    ) {
     }
 
     #[Route('/tourneys/{page}', name: 'app_tourneys')]
     public function index(int $page = 1): Response
     {
-        $tourneyRepository = $this->em->getRepository(Tourney::class);
-        $tourneys = $tourneyRepository->getByStateQuery(TourneyState::STARTED)->getResult();
-
-        return $this->render('tourney/index.html.twig', [
-            'tourneys' => $tourneys,
-        ]);
+        return $this->tourneyListing(
+            $page,
+            TourneyState::STARTED,
+            'tourney/index.html.twig'
+        );
     }
 
     #[Route('/history/{page}', name: 'app_history')]
     public function history(int $page = 1): Response
     {
-        $tourneys = $this->em->getRepository(Tourney::class);
-        $query = $tourneys->getByStateQuery(TourneyState::ENDED);
-
-        $paginator = $this->paginator->paginate(
-            $query,
+        return $this->tourneyListing(
             $page,
-            10
+            TourneyState::ENDED,
+            'tourney/history.html.twig'
         );
+    }
 
-        return $this->render('tourney/history.html.twig', [
+    private function tourneyListing(
+        int $page,
+        TourneyState $state,
+        string $template,
+    ): Response {
+        $tourneys = $this->em->getRepository(Tourney::class);
+        $query = $tourneys->getByStateQuery($state);
+
+        $paginator = $this->paginator->paginate($query, $page, 10);
+
+        return $this->render($template, [
             'tourneys' => $paginator,
         ]);
     }

@@ -9,7 +9,6 @@ final readonly class OutcomesProbability
     public function __construct(
         public float $firstWinProbability,
         public float $secondWinProbability,
-        public float $tieProbability,
     )
     {
     }

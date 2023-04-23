@@ -2,8 +2,16 @@
 
 namespace App\Repository;
 
+use App\Entity\Discipline;
+use App\Entity\User;
 use App\Entity\UserRating;
+use App\Exception\RelationException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,6 +45,43 @@ class UserRatingRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getUserRatingInDiscipline(User $user, Discipline $discipline): ?UserRating
+    {
+        return $this->getDisciplineUserRatingBuilder($user, $discipline)
+            ->getQuery()
+            ->getOneOrNullResult(AbstractQuery::HYDRATE_OBJECT);
+    }
+
+    /**
+     * @throws NonUniqueResultException
+     * @throws RelationException
+     * @throws NoResultException
+     */
+    public function hasUserRatingInDiscipline(User $user, Discipline $discipline): bool
+    {
+        $query = $this->getDisciplineUserRatingBuilder($user, $discipline)
+            ->select('count(rating.id)')
+            ->getQuery();
+
+
+        $count = (int)$query->getSingleScalarResult();
+
+        if ($count > 1) {
+            throw new RelationException("User can not have more than 1 rating for one discipline. Wtf?");
+        }
+
+        return $count === 1;
+    }
+
+    private function getDisciplineUserRatingBuilder(User $user, Discipline $discipline): QueryBuilder
+    {
+        return $this->createQueryBuilder('rating')
+            ->where('rating.participant = :user')
+            ->andWhere('rating.discipline = :discipline')
+            ->setParameter('user', $user)
+            ->setParameter('discipline', $discipline);
     }
 
 //    /**
