@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Dto\TourneyDatesDto;
 use App\Entity\MatchResult;
+use App\Entity\Tourney;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
@@ -64,6 +66,28 @@ class MatchResultRepository extends ServiceEntityRepository
             ->setMaxResults($count)
             ->getQuery()
             ->getResult();
+    }
+
+    /** Gets tourney dates by match result. But preferred way is to get it through Challonge API */
+    public function getTourneyDates(Tourney $tourney): TourneyDatesDto
+    {
+        $result = $this->createQueryBuilder('result')
+            ->select('result.finishedAt')
+            ->where('result.tourney = :tourney')
+            ->setParameter('tourney', $tourney)
+            ->orderBy('result.finishedAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        /** @var \DateTimeImmutable[] $result */
+        $result = array_column($result, 'finishedAt');
+
+        $last = array_key_last($result);
+
+        return new TourneyDatesDto(
+            startDate: $result[0],
+            endDate: $result[$last]
+        );
     }
 
 //    /**

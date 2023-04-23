@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
+    private bool $isVerified = false;
 
     #[ORM\ManyToMany(targetEntity: Badge::class, mappedBy: 'users')]
     #[ORM\OrderBy(['priority' => 'DESC'])]
@@ -61,7 +61,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'participant', targetEntity: UserRating::class, orphanRemoval: true)]
     private Collection $userRatings;
 
-    #[ORM\OneToOne(mappedBy: 'relatedUser', cascade: ['persist'], fetch: 'EAGER')]
+    #[ORM\OneToOne(mappedBy: 'relatedUser', cascade: ['persist'])]
     private ?ChallongeToken $challongeToken = null;
 
 

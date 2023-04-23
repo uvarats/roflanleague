@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\ValueResolver;
 
-use App\Dto\Base\Data;
-use App\Dto\Base\MapperFactory;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Uvarats\Dto\Data;
 
 class DTOResolver implements ValueResolverInterface
 {
@@ -21,19 +20,16 @@ class DTOResolver implements ValueResolverInterface
             return [];
         }
 
-        $argumentData = $request->request->get($argument->getName());
+        $argumentData = $request->toArray();
 
-        if ($argumentData === null) {
-            $argumentData = $request->getContent();
-        }
-
-        if (!is_string($argumentData)) {
+        if ($argumentData === []) {
             return [];
         }
 
-        $factory = new MapperFactory();
-        $mapper = $factory->getMapper();
+        if (count($argumentData) === 1 && isset($argumentData['data'])) {
+            $argumentData = $argumentData['data'];
+        }
 
-        return [$mapper->map($argumentData, $type)];
+        return [$type::from($argumentData)];
     }
 }

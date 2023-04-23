@@ -39,6 +39,20 @@ class TourneyInviteRepository extends ServiceEntityRepository
         }
     }
 
+
+    public function deactivateLinkBySlug(string $slug)
+    {
+        $link = $this->findOneBy([
+            'slug' => $slug
+        ]);
+
+        if ($link->isActive()) {
+            $link->setIsActive(false);
+        }
+
+        $this->save($link, true);
+    }
+
 //    /**
 //     * @return TourneyInvite[] Returns an array of TourneyInvite objects
 //     */

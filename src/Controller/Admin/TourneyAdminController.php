@@ -13,6 +13,9 @@ use App\Entity\Tourney;
 use App\Entity\User;
 use App\Form\ExistingTourneyType;
 use App\Form\TourneyType;
+use App\Repository\MatchResultRepository;
+use App\Repository\TourneyRepository;
+use App\Repository\UserRepository;
 use App\Service\ChallongeService;
 use App\Service\Factory\TourneyFactory;
 use App\Service\TourneyService;
@@ -32,15 +35,15 @@ class TourneyAdminController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $em,
         private readonly ChallongeService       $challonge,
+        private readonly TourneyService         $tourneyService
     )
     {
 
     }
 
     #[Route('/tourneys', name: 'app_admin_tourneys')]
-    public function tourneys(): Response
+    public function tourneys(TourneyRepository $tourneys): Response
     {
-        $tourneys = $this->em->getRepository(Tourney::class);
         return $this->render('admin/tourney/tourneys.html.twig', [
             'tourneys' => $tourneys->findAll(),
         ]);
@@ -75,6 +78,7 @@ class TourneyAdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // TODO
             $tourney = $tourneyFactory->createFromChallonge($existingTourney);
         }
 
@@ -124,12 +128,11 @@ class TourneyAdminController extends AbstractController
     }
 
     #[Route('/tourney/{id}/reset', name: 'app_tourney_reset', methods: ['POST'])]
-    public function resetTourney(Tourney $tourney): JsonResponse
+    public function resetTourney(Tourney $tourney, MatchResultRepository $results): JsonResponse
     {
         $this->challonge->resetTournament($tourney);
 
         $tourney->setState(TourneyState::NEW->value);
-        $results = $this->em->getRepository(MatchResult::class);
         $tourneyResults = $results->findBy(['tourney' => $tourney]);
 
         foreach ($tourneyResults as $tourneyResult) {
@@ -184,9 +187,8 @@ class TourneyAdminController extends AbstractController
     }
 
     #[Route('/tourney/{id}/participants/add', name: 'app_tourney_participants_add')]
-    public function tourneyAddParticipants(Tourney $tourney): Response
+    public function tourneyAddParticipants(Tourney $tourney, UserRepository $users): Response
     {
-        $users = $this->em->getRepository(User::class);
         $availableUsers = $users->getUsersNotInTourney($tourney);
         return $this->render('admin/tourney/tourney_participants_add.html.twig', [
             'tourney' => $tourney,
@@ -209,54 +211,55 @@ class TourneyAdminController extends AbstractController
     public function participantsAction(Tourney $tourney, Request $request, ParticipantAction $action): JsonResponse
     {
         $id = $request->request->get('id');
-        if ($id) {
-            $users = $this->em->getRepository(User::class);
-            $user = $users->find($id);
-            if ($user !== null) {
-                if ($action === ParticipantAction::ADD) {
-                    $this->challonge->addParticipant($tourney, $user);
-                    $tourney->addParticipant($user);
-                }
 
-                if ($action === ParticipantAction::REMOVE) {
-                    $this->challonge->removeParticipant($tourney, $user);
-                    $tourney->removeParticipant($user);
-                }
-
-                $this->em->flush();
-                return $this->json([
-                    'success' => true,
-                ]);
-            }
-
+        if ($id === null) {
             return $this->json([
                 'error' => 'User with this id does not exists!',
             ]);
         }
 
+        $users = $this->em->getRepository(User::class);
+        $user = $users->find($id);
+
+        if ($user === null) {
+            return $this->json([
+                'error' => 'Please, provide id...',
+            ]);
+        }
+
+        if ($action === ParticipantAction::ADD) {
+            $this->challonge->addParticipant($tourney, $user);
+            $tourney->addParticipant($user);
+        }
+
+        if ($action === ParticipantAction::REMOVE) {
+            $this->challonge->removeParticipant($tourney, $user);
+            $tourney->removeParticipant($user);
+        }
+
+        $this->em->flush();
         return $this->json([
-            'error' => 'Please, provide id...',
+            'success' => true,
         ]);
     }
 
     #[Route('/tourney/{id}/participants/get', name: 'app_tourney_participants_get', methods: ["POST"])]
-    public function getAdditionalParticipants(Tourney $tourney, Request $request): JsonResponse
+    public function getAdditionalParticipants(
+        Tourney $tourney,
+        Request $request,
+        UserRepository $users
+    ): JsonResponse
     {
-        $page = $request->request->get('page');
-        if ($page) {
-            $users = $this->em->getRepository(User::class);
-            $additionalUsers = $users->getUsersNotInTourney($tourney, $page);
-            $result = array_map(static function (User $target) {
-                return [
-                    'id' => $target->getId(),
-                    'name' => $target->getUsername()
-                ];
-            }, $additionalUsers);
-            return $this->json($result);
-        }
+        $page = (int)$request->request->get('page', 1);
 
-        return new JsonResponse([
-            'error' => 'Page is not provided :/',
-        ]);
+        $additionalUsers = $users->getUsersNotInTourney($tourney, $page);
+        $result = array_map(static function (User $target) {
+            return [
+                'id' => $target->getId(),
+                'name' => $target->getUsername()
+            ];
+        }, $additionalUsers);
+
+        return $this->json($result);
     }
 }

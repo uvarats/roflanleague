@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Match Result Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        .container {
+            margin: 0 auto;
+            max-width: 800px;
+            padding: 20px;
+        }
+        .logo {
+            float: right;
+            margin-top: 10px;
+            max-width: 150px;
+        }
+        .title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .match-info {
+            margin-top: 30px;
+        }
+        .match-info p {
+            margin-bottom: 10px;
+        }
+        .match-info p strong {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img class="logo" src="{{ asset('assets/logo.svg') }}" alt="League">
+    <h1 class="title">Match Result Report</h1>
+    <div class="match-info">
+        <p><strong>Турнир:</strong> {{ result.tourney.name }}</p>
+        <p><strong>Идентификатор матча:</strong> {{ result.id }}</p>
+        <p><strong>Хозяин:</strong> {{ result.homePlayer.username }}</p>
+        <p><strong>Гость:</strong> {{ result.awayPlayer.username }}</p>
+        <p><strong>Победитель:</strong> {{ result|winner }}</p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+# Read the documentation at https://github.com/thephpleague/flysystem-bundle/blob/master/docs/1-getting-started.md
+flysystem:
+    storages:
+        default.storage:
+            adapter: 'local'
+            options:
+                directory: '%env(resolve:LOCAL_STORAGE_DIR)%'
+        reports.storage:
+            adapter: 'local'
+            options:
+                directory: '%env(resolve:REPORTS_STORAGE_DIR)%'

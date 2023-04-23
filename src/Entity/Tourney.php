@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\TourneyState;
 use App\Repository\TourneyRepository;
+use App\Service\Report\Interface\ReportableInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: TourneyRepository::class)]
-class Tourney
+class Tourney implements ReportableInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -46,11 +48,15 @@ class Tourney
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
 
+    #[ORM\OneToMany(mappedBy: 'tourney', targetEntity: UserRatingUpdate::class)]
+    private Collection $ratingUpdates;
+
 
     public function __construct()
     {
         $this->participants = new ArrayCollection();
         $this->matchResults = new ArrayCollection();
+        $this->ratingUpdates = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -212,4 +218,45 @@ class Tourney
         return $this;
     }
 
+    public function isEnded(): bool
+    {
+        $state = $this->getState();
+
+        return $state === TourneyState::ENDED->value;
+    }
+
+    public function getReportName(): string
+    {
+        return 'tourney_' . $this->getId() . '_report.pdf';
+    }
+
+    /**
+     * @return Collection<int, UserRatingUpdate>
+     */
+    public function getRatingUpdates(): Collection
+    {
+        return $this->ratingUpdates;
+    }
+
+    public function addRatingUpdate(UserRatingUpdate $ratingUpdate): self
+    {
+        if (!$this->ratingUpdates->contains($ratingUpdate)) {
+            $this->ratingUpdates->add($ratingUpdate);
+            $ratingUpdate->setTourney($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRatingUpdate(UserRatingUpdate $ratingUpdate): self
+    {
+        if ($this->ratingUpdates->removeElement($ratingUpdate)) {
+            // set the owning side to null (unless already changed)
+            if ($ratingUpdate->getTourney() === $this) {
+                $ratingUpdate->setTourney(null);
+            }
+        }
+
+        return $this;
+    }
 }

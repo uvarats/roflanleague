@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Twig;
 
+use App\Entity\Enum\Result;
 use App\Entity\MatchResult;
 use App\Entity\User;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -15,16 +16,32 @@ class MatchResultExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('opponent', function (\App\Entity\MatchResult $matchResult, \App\Entity\User $user): ?\App\Entity\User {
+            new TwigFilter('opponent', function (MatchResult $matchResult, User $user): ?User {
                 return $this->getOpponent($matchResult, $user);
             }),
-            new TwigFilter('result', function (\App\Entity\MatchResult $matchResult, \App\Entity\User $user): string {
+            new TwigFilter('result', function (MatchResult $matchResult, User $user): string {
                 return $this->getResultForUser($matchResult, $user);
             }),
-            new TwigFilter('form', function (array $results, \App\Entity\User $user): ?string {
+            new TwigFilter('form', function (array $results, User $user): ?string {
                 return $this->getForm($results, $user);
             }),
+            new TwigFilter('winner', function (MatchResult $matchResult): string {
+                return $this->getWinner($matchResult);
+            })
         ];
+    }
+
+    public function getWinner(MatchResult $matchResult): string {
+        $result = $matchResult->getResult();
+        $homePlayer = $matchResult->getHomePlayer();
+        $awayPlayer = $matchResult->getAwayPlayer();
+
+        return match($result) {
+            Result::FIRST_WIN => $homePlayer->getUsername(),
+            Result::SECOND_WIN => $awayPlayer->getUsername(),
+            Result::TIE => 'Ничья',
+            Result::CANCELED => 'Отменен',
+        };
     }
 
     public function getOpponent(MatchResult $matchResult, User $user): ?User

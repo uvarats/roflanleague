@@ -27,6 +27,7 @@ class BadgeAdminController extends AbstractController
     public function main(): Response
     {
         $badges = $this->em->getRepository(Badge::class);
+
         return $this->render('admin/badge/index.html.twig', [
             'badges' => $badges->findAll(),
         ]);

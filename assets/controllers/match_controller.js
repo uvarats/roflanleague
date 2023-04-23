@@ -42,12 +42,8 @@ export default class extends Controller {
             'awayPlayerOdds': this.awayPlayerOddsValue
         };
 
-        let params = new URLSearchParams();
-        params.append('result', JSON.stringify(data))
-
-
         try {
-            let response = await axios.post(route, params);
+            let response = await axios.post(route, data);
             if (response.data.result) {
                 this.matchObjectTarget.remove();
                 this.disconnect();
